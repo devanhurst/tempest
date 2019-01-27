@@ -7,7 +7,7 @@ module TempoAPI
         @minutes = minutes
         @ticket = ticket
         @description = description
-        @date = date || Time.now
+        @date = date ? Date.parse(date) : Date.today
       end
 
       private
@@ -35,7 +35,7 @@ module TempoAPI
       end
 
       def formatted_date
-        date.is_a?(Time) ? date.strftime("%Y-%m-%d") : date
+        date.strftime("%Y-%m-%d")
       end
 
       def seconds

@@ -2,7 +2,7 @@ require_relative '../response'
 
 module Tempest
   module Responses
-    class Today < TempoAPI::Response
+    class ListWorklogs < TempoAPI::Response
       private
 
       attr_reader :worklogs
@@ -10,7 +10,7 @@ module Tempest
       def success_message
         output = ''
         output << worklogs_output
-        output << "TOTAL TIME LOGGED: #{hours(minutes(total_seconds_spent))} hours."
+        output << "\nTOTAL TIME LOGGED: #{hours(minutes(total_seconds_spent))} hours."
       end
 
       def worklogs
