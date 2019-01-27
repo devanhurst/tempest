@@ -13,32 +13,33 @@ require_relative '../../tempo_api/requests/list_worklogs'
 module Tempest
   module CLI
     class MainMenu < Thor
-      desc "track [MINUTES]", "Track time to Tempo."
+      desc "track [TIME]", "Track time to Tempo."
       long_desc <<-LONGDESC
-        'tempest track [MINUTES]' will track the specified number of minutes to the ticket specified.\n
+        'tempest track [time]' will track the specified number of hours or minutes to the ticket specified.\n
         If not specified, it will check the name of the current git branch and automatically
         put the logged time in that ticket, if found.\n
-        e.g. tempest track 60 --ticket='BCIT-2' --message='Making Tempest CLI!'
+        e.g. tempest track 1.5h --ticket='BCIT-2' --message='Tracking 1.5 hours!'
+        e.g. tempest track 90m --ticket='BCIT-2' --message='Tracking time in minutes this time.'
       LONGDESC
       option :message, aliases: '-m', type: :string
       option :ticket, aliases: '-t', type: :string
       option :date, aliases: '-d', type: :string
-      def track(minutes)
-        track_time(minutes, options)
+      def track(time)
+        track_time(time_in_minutes(time), options)
       end
 
-      desc 'multi [MINUTES]', 'Track identical time to multiple tickets.'
+      desc 'multi [TIME]', 'Track identical time to multiple tickets.'
       option :tickets, aliases: ['-t'], required: true, type: :array
       option :message, aliases: '-m', type: :string
       option :date, aliases: '-d', type: :string
-      def multi(minutes)
+      def multi(time)
         tickets = options['tickets'].map(&:upcase)
         response = ask(
           "About to track time to #{tickets.join(', ')}.\n"\
           'Are you sure? (y/n)', limited_to: %w[y n])
         abort unless %w[y yes].include?(response.downcase)
 
-        tickets.each { |ticket| track_time(minutes, options.merge(ticket: ticket)) }
+        tickets.each { |ticket| track_time(time_in_minutes(time), options.merge(ticket: ticket)) }
       end
 
       desc 'list DATE', "List worklogs for given date."
@@ -78,10 +79,12 @@ module Tempest
       private
 
       no_commands do
-        def track_time(minutes, options)
+        def track_time(time, options)
+          abort("Please provide time in the correct format. e.g. 0.5h, .5h, 30m") unless time > 0
+
           ticket = (options['ticket'] || automatic_ticket).upcase
-          puts "Tracking #{minutes} minutes to #{ticket}!"
-          request = TempoAPI::Requests::CreateWorklog.new(minutes,
+          puts "Tracking #{time} minutes to #{ticket}!"
+          request = TempoAPI::Requests::CreateWorklog.new(time,
                                                           ticket,
                                                           options['message'],
                                                           options['date'])
@@ -102,6 +105,15 @@ module Tempest
             list
             abort
           end
+        end
+
+        def time_in_minutes(time)
+          if /^\d*\.{0,1}\d{1,2}h$/.match(time)
+            return (time.chomp('h').to_f * 60).to_i
+          elsif /^\d+m$/.match(time)
+            return time.chomp('m').to_i
+          end
+          0
         end
       end
     end
