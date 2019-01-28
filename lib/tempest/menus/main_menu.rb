@@ -35,7 +35,7 @@ module Tempest
     map 't' => 'track'
 
     desc 'multi [TIME]', 'Track identical time to multiple tickets.'
-    option :tickets, aliases: ['-t'], required: true, type: :array
+    option :tickets, aliases: '-t', required: true, type: :array
     option :message, aliases: '-m', type: :string
     option :date, aliases: '-d', type: :string
     def multi(time)
@@ -46,7 +46,7 @@ module Tempest
     end
 
     desc 'split [TIME]', 'Track bank of time, split equally across multiple tickets.'
-    option :tickets, aliases: ['-t'], required: true, type: :array
+    option :tickets, aliases: '-t', required: true, type: :array
     option :message, aliases: '-m', type: :string
     option :date, aliases: '-d', type: :string
     def split(time)
@@ -117,7 +117,7 @@ module Tempest
       def automatic_ticket
         ticket = /[A-Z]+-\d+/.match(Git.open(Dir.pwd).current_branch)
         abort('Ticket not found for this branch. Please specify.') unless ticket
-        ticket
+        ticket.to_s
       end
 
       def check_worklog_presence(worklog_id)
