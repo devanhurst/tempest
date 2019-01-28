@@ -5,17 +5,16 @@ require 'thor'
 
 require_relative '../cli'
 
+require_relative '../../tempo_api/authorization'
 require_relative '../../tempo_api/requests/create_worklog'
 require_relative '../../tempo_api/requests/delete_worklog'
 require_relative '../../tempo_api/requests/list_worklogs'
 
 require_relative '../helpers/time_helper'
-require_relative '../helpers/secret_helper'
 
 module Tempest
   class MainMenu < CLI
     include Tempest::Helpers::TimeHelper
-    include Tempest::Helpers::SecretHelper
 
     desc "track [TIME]", "Track time to Tempo."
     long_desc <<-LONGDESC
@@ -76,10 +75,7 @@ module Tempest
         )
       end
 
-      update_secret do |new_secrets|
-        new_secrets['tempo']['user'] = options['user']
-        new_secrets['tempo']['token'] = options['token']
-      end
+      TempoAPI::Authorization.update_credentials(options['user'], options['token'])
     end
 
     private

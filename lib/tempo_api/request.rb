@@ -2,13 +2,12 @@ require 'httparty'
 require 'json'
 require 'yaml'
 
-require_relative '../tempest/helpers/secret_helper'
+require_relative './authorization'
 require_relative 'response'
 
 module TempoAPI
   class Request
     include HTTParty
-    include Tempest::Helpers::SecretHelper
 
     base_uri 'https://api.tempo.io/2/'
 
@@ -61,16 +60,16 @@ module TempoAPI
       {}
     end
 
+    def credentials
+      @credentials ||= Authorization.credentials
+    end
+
     def user
-      @user ||= secrets.fetch('user')
+      @user ||= credentials[:user]
     end
 
     def auth_token
-      @auth_token ||= secrets.fetch('token')
-    end
-
-    def secrets
-      super.dig('tempo')
+      @auth_token ||= credentials[:token]
     end
   end
 end
