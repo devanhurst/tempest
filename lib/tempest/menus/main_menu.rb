@@ -28,9 +28,10 @@ module Tempest
     option :ticket, aliases: '-t', type: :string
     option :date, aliases: '-d', type: :string
     def track(time)
+      time = parsed_time(time)
       ticket = (options['ticket'] || automatic_ticket).upcase
       confirm("Track #{formatted_time(time)} to #{ticket}?")
-      track_time(time_in_minutes(time), options.merge(ticket: ticket))
+      track_time(parsed_time(time), options.merge(ticket: ticket))
     end
 
     map 't' => 'track'
@@ -40,9 +41,21 @@ module Tempest
     option :message, aliases: '-m', type: :string
     option :date, aliases: '-d', type: :string
     def multi(time)
+      time = parsed_time(time)
       tickets = options['tickets'].map(&:upcase)
       confirm("Track #{formatted_time(time)} each to #{tickets.join(', ')}?")
-      tickets.each { |ticket| track_time(time_in_minutes(time), options.merge(ticket: ticket)) }
+      tickets.each { |ticket| track_time(parsed_time(time), options.merge(ticket: ticket)) }
+    end
+
+    desc 'split [TIME]', 'Track bank of time, split equally across multiple tickets.'
+    option :tickets, aliases: ['-t'], required: true, type: :array
+    option :message, aliases: '-m', type: :string
+    option :date, aliases: '-d', type: :string
+    def split(time)
+      tickets = options['tickets'].map(&:upcase)
+      time = parsed_time(time) / tickets.count
+      confirm("Track #{formatted_time(time)} each to #{tickets.join(', ')}?")
+      tickets.each { |ticket| track_time(time, options.merge(ticket: ticket)) }
     end
 
     desc 'list DATE', "List worklogs for given date."
@@ -64,8 +77,8 @@ module Tempest
     end
 
     desc 'setup', 'Setup Tempest CLI with your credentials.'
-    option :user
-    option :token
+    option :user, aliases: '-u', type: :string
+    option :token, aliases: '-t', type: :string
     def setup
       if options['user'].nil? || options['token'].nil?
         abort(
@@ -82,8 +95,6 @@ module Tempest
 
     no_commands do
       def track_time(time, options)
-        abort("Please provide time in the correct format. e.g. 0.5h, .5h, 30m") unless time > 0
-
         puts "Tracking #{formatted_time(time)} to #{options['ticket']}!"
         request = TempoAPI::Requests::CreateWorklog.new(time,
                                                         options['ticket'],
@@ -91,6 +102,18 @@ module Tempest
                                                         options['date'])
         request.send_request
         puts request.response_message
+      end
+
+      def parsed_time(time)
+        return time if time.is_a?(Integer)
+
+        if /^\d*\.{0,1}\d{1,2}h$/.match(time)
+          return (time.chomp('h').to_f * 60).to_i
+        elsif /^\d+m$/.match(time)
+          return time.chomp('m').to_i
+        end
+
+        abort("Please provide time in the correct format. e.g. 0.5h, .5h, 30m")
       end
 
       def automatic_ticket
