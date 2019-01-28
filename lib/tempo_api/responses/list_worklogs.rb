@@ -1,38 +1,39 @@
 require_relative '../response'
+require_relative '../models/worklog'
+require_relative '../../tempest/helpers/time_helper'
 
 module Tempest
   module Responses
     class ListWorklogs < TempoAPI::Response
+      include Tempest::Helpers::TimeHelper
+
       private
 
       attr_reader :worklogs
 
       def success_message
-        output = ''
+        output = ""
         output << worklogs_output
-        output << "\nTOTAL TIME LOGGED: #{hours(minutes(total_seconds_spent))} hours."
+        output << "\nTOTAL TIME LOGGED: #{total_hours_spent} hours."
       end
 
       def worklogs
-        @worklogs ||= raw_response['results']
+        @worklogs ||= raw_response['results'].map do |worklog|
+          TempoAPI::Models::Worklog.new(
+            id: worklog['tempoWorklogId'],
+            issue: worklog.dig('issue', 'key'),
+            seconds: worklog['timeSpentSeconds'],
+            description: worklog['description']
+          )
+        end
       end
 
       def worklogs_output
-        worklogs.map do |log|
-          "#{log['tempoWorklogId']}: #{log.dig('issue', 'key')}: #{minutes(log['timeSpentSeconds'])}m: #{log['description']}\n"
-        end.join
+        worklogs.map(&:to_s).join("\n")
       end
 
-      def total_seconds_spent
-        worklogs.map { |log| log['timeSpentSeconds'] }.reduce(:+) || 0
-      end
-
-      def minutes(seconds)
-        seconds / 60
-      end
-
-      def hours(minutes)
-        (minutes.to_f / 60).round(2)
+      def total_hours_spent
+        worklogs.map { |log| log.hours }.reduce(:+) || 0
       end
     end
   end

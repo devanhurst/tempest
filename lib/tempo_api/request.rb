@@ -1,11 +1,14 @@
 require 'httparty'
 require 'json'
 require 'yaml'
+
+require_relative '../tempest/helpers/secret_helper'
 require_relative 'response'
 
 module TempoAPI
   class Request
     include HTTParty
+    include Tempest::Helpers::SecretHelper
 
     base_uri 'https://api.tempo.io/2/'
 
@@ -67,7 +70,7 @@ module TempoAPI
     end
 
     def secrets
-      @secrets ||= YAML::load_file('config/secrets.yml')['tempo']
+      super.dig('tempo')
     end
   end
 end
