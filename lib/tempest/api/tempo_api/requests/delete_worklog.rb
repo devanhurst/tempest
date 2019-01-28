@@ -4,6 +4,7 @@ module TempoAPI
   module Requests
     class DeleteWorklog < TempoAPI::Request
       def initialize(worklog_id)
+        super
         @worklog_id = worklog_id
       end
 

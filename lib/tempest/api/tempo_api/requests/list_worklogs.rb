@@ -7,6 +7,7 @@ module TempoAPI
       attr_reader :date
 
       def initialize(date_input)
+        super
         @date = parsed_date_input(date_input)
       end
 
@@ -17,7 +18,7 @@ module TempoAPI
       private
 
       def response_klass
-        Tempest::Responses::ListWorklogs
+        TempoAPI::Responses::ListWorklogs
       end
 
       def request_method
@@ -26,6 +27,10 @@ module TempoAPI
 
       def request_path
         "/worklogs/user/#{user}"
+      end
+
+      def auth_type
+        'bearer'
       end
 
       def query_params

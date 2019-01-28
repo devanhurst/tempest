@@ -3,16 +3,37 @@ require 'thor'
 
 require_relative '../cli'
 
-require_relative '../../tempo_api/authorization'
-require_relative '../../tempo_api/requests/create_worklog'
-require_relative '../../tempo_api/requests/delete_worklog'
-require_relative '../../tempo_api/requests/list_worklogs'
+require_relative '../api/jira_api/authorization'
+require_relative '../api/jira_api/requests/get_issue'
+
+require_relative '../api/tempo_api/authorization'
+require_relative '../api/tempo_api/requests/create_worklog'
+require_relative '../api/tempo_api/requests/delete_worklog'
+require_relative '../api/tempo_api/requests/list_worklogs'
 
 require_relative '../helpers/time_helper'
 
 module Tempest
   class MainMenu < CLI
     include Tempest::Helpers::TimeHelper
+
+    desc 'setup [TOOL]', 'Provide Jira and Tempo credentials.'
+    def setup
+      email = ask('Enter your Atlassian ID. This is typically your login email.')
+      id = ask('Enter your Tempo username.')
+      domain = ask('Enter your atlassian subdomain. i.e. [THIS VALUE].atlassian.net')
+      jira_token = ask('Enter your Atlassian API token. Your token can be generated at https://id.atlassian.com.')
+      tempo_token = ask("Enter your Tempo API token. Your tempo token can be generated through your worksheet's settings page.")
+
+      if [email, id, domain, jira_token, tempo_token].any?(&:empty?)
+        abort('One or more credentials were missing. Please try again.')
+      end
+
+      puts 'Setting up...'
+      TempoAPI::Authorization.new.update_credentials('https://api.tempo.io/2', id, tempo_token)
+      JiraAPI::Authorization.new.update_credentials("https://#{domain}.atlassian.net/rest/api/3", email, jira_token)
+      puts 'Good to go!'
+    end
 
     desc "track [TIME]", "Track time to Tempo."
     long_desc <<-LONGDESC
@@ -25,6 +46,7 @@ module Tempest
     option :message, aliases: '-m', type: :string
     option :ticket, aliases: '-t', type: :string
     option :date, aliases: '-d', type: :string
+    option :remaining, aliases: '-r', type: :string
     def track(time)
       time = parsed_time(time)
       ticket = (options['ticket'] || automatic_ticket).upcase
@@ -50,20 +72,19 @@ module Tempest
     option :message, aliases: '-m', type: :string
     option :date, aliases: '-d', type: :string
     def split(time)
+      time = parsed_time(time)
       tickets = options['tickets'].map(&:upcase)
-      time = parsed_time(time) / tickets.count
-      confirm("Track #{formatted_time(time)} each to #{tickets.join(', ')}?")
+      confirm("Track #{formatted_time(parsed_time(time))} each to #{tickets.join(', ')}?")
       tickets.each { |ticket| track_time(time, options.merge(ticket: ticket)) }
     end
 
-    desc 'list DATE', "List worklogs for given date."
+    desc 'list [DATE]', "List worklogs for given date."
     def list(date=nil)
       request = TempoAPI::Requests::ListWorklogs.new(date)
       request.send_request
       puts "\nHere are your logs for #{request.formatted_date}:\n"
       puts request.response_message
     end
-
     map 'l' => 'list'
 
     desc 'delete [WORKLOG_ID]', 'Delete worklog with ID [WORKLOG_ID]'
@@ -74,19 +95,11 @@ module Tempest
       puts request.response_message
     end
 
-    desc 'setup', 'Setup Tempest CLI with your credentials.'
-    option :user, aliases: '-u', type: :string
-    option :token, aliases: '-t', type: :string
-    def setup
-      if options['user'].nil? || options['token'].nil?
-        abort(
-          "Please provide your user credentials.\n"\
-          "(--user=USERID -- token=TOKEN)\n"\
-          "Your token can be accessed through your worksheet's settings page."
-        )
-      end
-
-      TempoAPI::Authorization.update_credentials(options['user'], options['token'])
+    desc 'issue [ISSUE]', 'Get Jira issue'
+    def issue(id)
+      request = JiraAPI::Requests::GetIssue.new(id)
+      request.send_request
+      puts request.response_message
     end
 
     private
@@ -94,7 +107,9 @@ module Tempest
     no_commands do
       def track_time(time, options)
         puts "Tracking #{formatted_time(time)} to #{options['ticket']}!"
+        remaining = options['remaining'].nil? ? remaining_estimate(options['ticket'], time) : parsed_time(options['remaining'])
         request = TempoAPI::Requests::CreateWorklog.new(time,
+                                                        remaining,
                                                         options['ticket'],
                                                         options['message'],
                                                         options['date'])
@@ -102,16 +117,11 @@ module Tempest
         puts request.response_message
       end
 
-      def parsed_time(time)
-        return time if time.is_a?(Integer)
-
-        if /^\d*\.{0,1}\d{1,2}h$/.match(time)
-          return (time.chomp('h').to_f * 60).to_i
-        elsif /^\d+m$/.match(time)
-          return time.chomp('m').to_i
-        end
-
-        abort("Please provide time in the correct format. e.g. 0.5h, .5h, 30m")
+      def remaining_estimate(ticket, time)
+        request = JiraAPI::Requests::GetIssue.new(ticket)
+        request.send_request
+        remaining = request.response.issue.remaining_estimate
+        remaining > time ? remaining - time : 0
       end
 
       def automatic_ticket

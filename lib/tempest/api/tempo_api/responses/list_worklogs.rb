@@ -1,8 +1,8 @@
 require_relative '../response'
 require_relative '../models/worklog'
-require_relative '../../tempest/helpers/time_helper'
+require_relative '../../../helpers/time_helper'
 
-module Tempest
+module TempoAPI
   module Responses
     class ListWorklogs < TempoAPI::Response
       include Tempest::Helpers::TimeHelper

@@ -3,8 +3,10 @@ require_relative '../request'
 module TempoAPI
   module Requests
     class CreateWorklog < TempoAPI::Request
-      def initialize(minutes, ticket, description, date)
-        @minutes = minutes
+      def initialize(seconds, remaining, ticket, description, date)
+        super
+        @seconds = seconds
+        @remaining = remaining
         @ticket = ticket
         @description = description
         @date = date ? Date.parse(date) : Date.today
@@ -12,7 +14,7 @@ module TempoAPI
 
       private
 
-      attr_reader :ticket, :minutes, :description, :date
+      attr_reader :ticket, :remaining, :seconds, :description, :date
 
       def request_method
         'post'
@@ -27,6 +29,7 @@ module TempoAPI
           "issueKey": ticket,
           "timeSpentSeconds": seconds,
           "billableSeconds": seconds,
+          "remainingEstimateSeconds": remaining,
           "startDate": formatted_date,
           "startTime": '12:00:00',
           "authorUsername": user,
@@ -36,10 +39,6 @@ module TempoAPI
 
       def formatted_date
         date.strftime("%Y-%m-%d")
-      end
-
-      def seconds
-        minutes.to_i * 60
       end
     end
   end
