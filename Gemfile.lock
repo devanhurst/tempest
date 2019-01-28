@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tempest (0.1.0)
+    tempest-time (0.1.0)
       httparty (~> 0.16)
       ruby-git
       thor (~> 0.20)
@@ -30,7 +30,7 @@ DEPENDENCIES
   byebug
   minitest (~> 5.0)
   rake (~> 10.0)
-  tempest!
+  tempest-time!
 
 BUNDLED WITH
    1.16.1

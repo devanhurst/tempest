@@ -1,6 +1,4 @@
-require 'byebug'
 require 'git'
-
 require 'thor'
 
 require_relative '../cli'
