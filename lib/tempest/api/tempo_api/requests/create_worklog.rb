@@ -1,20 +1,22 @@
 require_relative '../request'
+require_relative '../responses/create_worklog'
 
 module TempoAPI
   module Requests
     class CreateWorklog < TempoAPI::Request
-      def initialize(seconds, remaining, ticket, description, date)
+      def initialize(seconds, options)
         super
         @seconds = seconds
-        @remaining = remaining
-        @ticket = ticket
-        @description = description
-        @date = date ? Date.parse(date) : Date.today
+        @remaining = options['remaining']
+        @ticket = options['ticket']
+        @message = options['message']
+        @date = options['date'] ? Date.parse(options['date']) : Date.today
+        @billable = options['billable']
       end
 
       private
 
-      attr_reader :ticket, :remaining, :seconds, :description, :date
+      attr_reader :ticket, :remaining, :seconds, :message, :date, :billable
 
       def request_method
         'post'
@@ -24,17 +26,25 @@ module TempoAPI
         '/worklogs'
       end
 
+      def response_klass
+        TempoAPI::Responses::CreateWorklog
+      end
+
       def request_body
         {
           "issueKey": ticket,
           "timeSpentSeconds": seconds,
-          "billableSeconds": seconds,
+          "billableSeconds": billable_time,
           "remainingEstimateSeconds": remaining,
           "startDate": formatted_date,
           "startTime": '12:00:00',
           "authorUsername": user,
-          "description": description
+          "description": message
         }.to_json
+      end
+
+      def billable_time
+        billable ? seconds : 0
       end
 
       def formatted_date

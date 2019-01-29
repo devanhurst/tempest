@@ -19,7 +19,7 @@ module Tempest
       #    HTTParty call to API
 
       def response
-        @response ||= response_klass.new(raw_response)
+        @response ||= response_klass.new(raw_response, self)
       end
 
       def response_message

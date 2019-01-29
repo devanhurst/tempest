@@ -1,10 +1,10 @@
 require 'tempest/version'
-require_relative 'tempest/menus/main_menu'
+require_relative 'tempest/cli'
 
 module Tempest
   class Runner
     def start(args)
-      Tempest::MainMenu.start(args)
+      Tempest::CLI.start(args)
     end
   end
 end

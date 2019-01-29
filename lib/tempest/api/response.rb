@@ -1,8 +1,9 @@
 module Tempest
   module API
     class Response
-      def initialize(raw_response)
+      def initialize(raw_response, request)
         @raw_response = raw_response
+        @request = request
       end
 
       def message
@@ -11,7 +12,7 @@ module Tempest
 
       private
 
-      attr_reader :raw_response
+      attr_reader :raw_response, :request
 
       def success_message
         'Success!'
