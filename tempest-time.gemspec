@@ -6,6 +6,8 @@ require "tempest/version"
 Gem::Specification.new do |spec|
   spec.name          = "tempest-time"
   spec.version       = Tempest::VERSION
+  spec.licenses      = ['MIT']
+
   spec.authors       = ["Devan Hurst"]
   spec.email         = ["devan.hurst@gmail.com"]
 
@@ -28,6 +30,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "thor", "~>0.20"
   spec.add_dependency "httparty", "~>0.16"
-  spec.add_dependency "git", "~> 0"
-  spec.add_dependency "ruby-git", "~> 0.2"
+  spec.add_dependency "git", "~>1.5"
+  spec.add_dependency "ruby-git", "~>0.2"
 end
