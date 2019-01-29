@@ -15,7 +15,7 @@ module Tempest
       end
 
       def formatted_time(seconds)
-        seconds < 3600 ? "#{seconds / 60} minutes" : "#{(seconds / 3600)} hours"
+        seconds < 3600 ? "#{seconds / 60} minutes" : "#{(seconds / 3600.to_f).round(2)} hours"
       end
     end
   end

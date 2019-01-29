@@ -72,8 +72,8 @@ module Tempest
     option :message, aliases: '-m', type: :string
     option :date, aliases: '-d', type: :string
     def split(time)
-      time = parsed_time(time)
       tickets = options['tickets'].map(&:upcase)
+      time = parsed_time(time) / tickets.count
       confirm("Track #{formatted_time(parsed_time(time))} each to #{tickets.join(', ')}?")
       tickets.each { |ticket| track_time(time, options.merge(ticket: ticket)) }
     end
