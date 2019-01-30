@@ -1,4 +1,4 @@
-require_relative '../helpers/settings_helper'
+require_relative '../settings'
 
 module Tempest
   module API
@@ -10,7 +10,7 @@ module Tempest
       private
 
       def settings
-        Tempest::Helpers::SettingsHelper
+        Tempest::Settings
       end
     end
   end

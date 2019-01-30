@@ -9,10 +9,10 @@ module Tempest
           long_desc <<-LONGDESC
             `tempest track` or `tempest log` will track the specified number of hours or minutes to the ticket(s) specified.\n
             If not specified, it will check the name of the current git branch and automatically track the logged time to that ticket, if found.\n
-            You can also split a bank of time evenly across multiple tickets with the --split flag.
-            e.g. tempest track 1.5h BCIT-1 --message='Tracking 1.5 hours.'
-            e.g. tempest track 90m BCIT-1 BCIT-2 --message='Tracking 90 minutes.'
-            e.g. tempest track 3h BCIT-1 BCIT-2 BCIT-3 --message='Tracking 1 hour.'
+            You can also split a bank of time evenly across multiple tickets with the --split flag.\n
+            e.g. tempest track 1.5h BCIT-1 --message='Tracking 1.5 hours.'\n
+            e.g. tempest log 90m BCIT-1 BCIT-2 --message='Tracking 90 minutes.'\n
+            e.g. tempest track 3h BCIT-1 BCIT-2 BCIT-3 --message='Tracking 1 hour.'\n
           LONGDESC
           option :message, aliases: '-m', type: :string
           option :date, aliases: '-d', type: :string
@@ -27,7 +27,13 @@ module Tempest
             tickets.each { |ticket| track_time(parsed_time(time), options.merge(ticket: ticket)) }
           end
 
-          desc 'list [DATE]', "List worklogs for given date."
+          desc 'list [DATE]', 'List worklogs for given date. (Defaults to today.)'
+          long_desc <<-LONGDESC
+            `tempest list` will list a day's worklogs.\n
+            e.g. `tempest list today`\n
+            e.g. `tempest list yesterday`\n
+            e.g. `tempest list 2019-01-31`\n
+          LONGDESC
           def list(date=nil)
             request = TempoAPI::Requests::ListWorklogs.new(date)
             request.send_request
@@ -35,13 +41,16 @@ module Tempest
             puts request.response_message
           end
 
-          desc 'delete', 'Delete worklog with IDS [WORKLOG_ID]'
-          option :worklogs, aliases: '-w', required: true, type: :array
+          desc 'delete [WORKLOG(S)]', 'Delete worklogs.'
+          long_desc <<-LONGDESC
+            `tempest delete` will delete the specified worklogs.\n
+            e.g. `tempest delete 12345`\n
+            e.g. `tempest delete 12345 12346 12347`\n
+          LONGDESC
           option :autoconfirm, type: :boolean
-          def delete
-            worklogs = options['worklogs']
+          def delete(*worklogs)
             confirm("Delete worklog(s) #{worklogs.join(', ')}?", options)
-            worklogs.each { |worklog| delete_worklog(worklog)}
+            worklogs.each { |worklog| delete_worklog(worklog) }
           end
 
           map 't' => 'track'

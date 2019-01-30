@@ -1,4 +1,4 @@
-require_relative '../helpers/settings_helper'
+require_relative '../settings'
 
 module Tempest
   module Commands
@@ -32,26 +32,27 @@ module Tempest
             end
 
             puts 'Setting up...'
-            Tempest::Helpers::SettingsHelper.update('email', email)
-            Tempest::Helpers::SettingsHelper.update('username', username)
-            Tempest::Helpers::SettingsHelper.update('subdomain', subdomain)
-            Tempest::Helpers::SettingsHelper.update('jira_token', jira_token)
-            Tempest::Helpers::SettingsHelper.update('tempo_token', tempo_token)
+            Tempest::Settings.update('email', email)
+            Tempest::Settings.update('username', username)
+            Tempest::Settings.update('subdomain', subdomain)
+            Tempest::Settings.update('jira_token', jira_token)
+            Tempest::Settings.update('tempo_token', tempo_token)
             puts 'Good to go!'
           end
 
-          desc 'config', 'View or modify current config settings.'
-          option 'edit',
-                 type: :string,
-                 limited_to: %w[email id subdomain jira_token tempo_token]
+          desc 'config (edit)', 'View (config) or modify (config edit) current settings.'
+          long_desc <<-LONGDESC
+            `tempest config` will list current user configs.\n
+            `tempest config edit` will prompt you to select a config value to edit.\n
+          LONGDESC
           def config(command = nil)
             if command == 'edit'
               key = ask('Which value would you like to edit?',
-                        limited_to: Tempest::Helpers::SettingsHelper.keys)
+                        limited_to: Tempest::Settings.keys)
               new_value = ask("Please enter your new #{key}.")
-              Tempest::Helpers::SettingsHelper.update(key, new_value)
+              Tempest::Settings.update(key, new_value)
             end
-            puts Tempest::Helpers::SettingsHelper.to_s
+            puts Tempest::Settings.to_s
           end
         end
       end
