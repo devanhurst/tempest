@@ -1,15 +1,23 @@
-require_relative('../authorization')
+require_relative '../authorization'
 
 module TempoAPI
   class Authorization < Tempest::API::Authorization
     private
 
-    def authorization
-      Authorization.new
+    def url
+      'https://api.tempo.io/2'
     end
 
-    def file_name
-      'tempo_api'
+    def user
+      settings.read('username')
+    end
+
+    def email
+      settings.read('email')
+    end
+
+    def token
+      settings.read('tempo_token')
     end
   end
 end

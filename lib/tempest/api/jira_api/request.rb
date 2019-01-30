@@ -29,5 +29,9 @@ module JiraAPI
     def response_klass
       Response
     end
+
+    def user
+      credentials.fetch(:email, nil)
+    end
   end
 end

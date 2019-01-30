@@ -4,8 +4,24 @@ module JiraAPI
   class Authorization < Tempest::API::Authorization
     private
 
-    def file_name
-      'jira_api'
+    def url
+      "https://#{subdomain}.atlassian.net/rest/api/3"
+    end
+
+    def subdomain
+      settings.read('subdomain')
+    end
+
+    def user
+      settings.read('username')
+    end
+
+    def email
+      settings.read('email')
+    end
+
+    def token
+      settings.read('jira_token')
     end
   end
 end
