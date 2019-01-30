@@ -22,7 +22,7 @@ module Tempest
           option :autoconfirm, type: :boolean, default: false
           def track(time, *tickets)
             time = options[:split] ? parsed_time(time) / tickets.count : parsed_time(time)
-            tickets = tickets.map(&:upcase)
+            tickets = tickets.any? ? tickets.map(&:upcase) : [automatic_ticket]
             confirm("Track #{formatted_time(time)}, #{billability(options)}, to #{tickets.join(', ')}?", options)
             tickets.each { |ticket| track_time(parsed_time(time), options.merge(ticket: ticket)) }
           end
