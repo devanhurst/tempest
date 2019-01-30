@@ -5,13 +5,14 @@ module Tempest
         thor.class_eval do
           include Tempest::Helpers::TimeHelper
 
-          desc "track [TIME]", 'Track time to Tempo.'
+          desc "track [TIME] [TICKET(S)]", 'Track time to Tempo.'
           long_desc <<-LONGDESC
-            `tempest track [time]` will track the specified number of hours or minutes to the ticket specified.\n
-            If not specified, it will check the name of the current git branch and automatically
-            put the logged time in that ticket, if found.\n
-            e.g. tempest track 1.5h --ticket='BCIT-2' --message='Tracking 1.5 hours!'
-            e.g. tempest track 90m --ticket='BCIT-2' --message='Tracking time in minutes this time.'
+            `tempest track` or `tempest log` will track the specified number of hours or minutes to the ticket(s) specified.\n
+            If not specified, it will check the name of the current git branch and automatically track the logged time to that ticket, if found.\n
+            You can also split a bank of time evenly across multiple tickets with the --split flag.
+            e.g. tempest track 1.5h BCIT-1 --message='Tracking 1.5 hours.'
+            e.g. tempest track 90m BCIT-1 BCIT-2 --message='Tracking 90 minutes.'
+            e.g. tempest track 3h BCIT-1 BCIT-2 BCIT-3 --message='Tracking 1 hour.'
           LONGDESC
           option :message, aliases: '-m', type: :string
           option :date, aliases: '-d', type: :string
@@ -44,6 +45,7 @@ module Tempest
           end
 
           map 't' => 'track'
+          map 'log' => 'track'
           map 'l' => 'list'
           map 'd' => 'delete'
         end
