@@ -33,6 +33,10 @@ module Tempest
             def remaining_estimate(ticket, time)
               request = JiraAPI::Requests::GetIssue.new(ticket)
               request.send_request
+              if request.response.failure?
+                abort("There was an issue getting this Jira ticket.\n"\
+                      'Please check the ticket number and your credentials.')
+              end
               remaining = request.response.issue.remaining_estimate || 0
               remaining > time ? remaining - time : 0
             end

@@ -11,10 +11,6 @@ module TempoAPI
         @date = date
       end
 
-      def formatted_date
-        date.strftime("%Y-%m-%d")
-      end
-
       private
 
       def response_klass
@@ -31,8 +27,8 @@ module TempoAPI
 
       def query_params
         {
-          "from": formatted_date,
-          "to": formatted_date,
+          "from": date.strftime(DATE_FORMAT),
+          "to": date.strftime(DATE_FORMAT),
           "limit": 1000
         }
       end

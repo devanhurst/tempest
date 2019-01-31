@@ -6,6 +6,14 @@ module Tempest
         @request = request
       end
 
+      def success?
+        raw_response.success?
+      end
+
+      def failure?
+        !success?
+      end
+
       def message
         raw_response.success? ? success_message : failure_message
       end
