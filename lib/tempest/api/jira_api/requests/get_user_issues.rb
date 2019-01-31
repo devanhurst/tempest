@@ -16,7 +16,7 @@ module JiraAPI
 
       def query_params
         {
-          'jql' => "assignee=dhurst AND resolution is EMPTY",
+          'jql' => "assignee=#{username} AND resolution is EMPTY",
           'maxResults' => 100
         }
       end

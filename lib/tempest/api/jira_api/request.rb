@@ -33,5 +33,9 @@ module JiraAPI
     def user
       credentials.fetch(:email, nil)
     end
+
+    def username
+      credentials.fetch(:user, nil)
+    end
   end
 end
