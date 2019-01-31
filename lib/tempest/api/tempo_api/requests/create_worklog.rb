@@ -36,19 +36,15 @@ module TempoAPI
           "timeSpentSeconds": seconds,
           "billableSeconds": billable_time,
           "remainingEstimateSeconds": remaining,
-          "startDate": formatted_date,
+          "startDate": date.strftime('%Y-%m-%d'),
           "startTime": '12:00:00',
           "authorUsername": user,
           "description": message
-        }.to_json
+        }
       end
 
       def billable_time
         billable ? seconds : 0
-      end
-
-      def formatted_date
-        date.strftime("%Y-%m-%d")
       end
     end
   end

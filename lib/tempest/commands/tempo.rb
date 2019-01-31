@@ -34,11 +34,14 @@ module Tempest
             e.g. `tempest list yesterday`\n
             e.g. `tempest list 2019-01-31`\n
           LONGDESC
-          def list(date=nil)
-            request = TempoAPI::Requests::ListWorklogs.new(date)
-            request.send_request
-            puts "\nHere are your logs for #{request.formatted_date}:\n"
-            puts request.response_message
+          def list(date_input = nil)
+            dates = parsed_date_input(date_input)
+            dates.each do |date|
+              request = TempoAPI::Requests::ListWorklogs.new(date)
+              request.send_request
+              puts "\nHere are your logs for #{formatted_date(date)}:\n"
+              puts request.response_message
+            end
           end
 
           desc 'delete [WORKLOG(S)]', 'Delete worklogs.'
@@ -51,6 +54,17 @@ module Tempest
           def delete(*worklogs)
             confirm("Delete worklog(s) #{worklogs.join(', ')}?", options)
             worklogs.each { |worklog| delete_worklog(worklog) }
+          end
+
+          desc 'submit', 'Submit your timesheet!'
+          def submit
+            reviewer = ask('Who should review this timesheet? (username)')
+            confirm("Submit this week's timesheet to #{reviewer}?")
+            confirm('Are you sure? Your timesheet cannot be edited once submitted!')
+            puts "Submitting this week's timesheet..."
+            request = TempoAPI::Requests::SubmitTimesheet.new(reviewer)
+            request.send_request
+            puts request.response_message
           end
 
           map 't' => 'track'

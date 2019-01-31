@@ -6,9 +6,9 @@ module TempoAPI
     class ListWorklogs < TempoAPI::Request
       attr_reader :date
 
-      def initialize(date_input)
+      def initialize(date)
         super
-        @date = parsed_date_input(date_input)
+        @date = date
       end
 
       def formatted_date
@@ -29,27 +29,12 @@ module TempoAPI
         "/worklogs/user/#{user}"
       end
 
-      def auth_type
-        'bearer'
-      end
-
       def query_params
         {
           "from": formatted_date,
           "to": formatted_date,
           "limit": 1000
         }
-      end
-
-      def parsed_date_input(date_input)
-        case date_input
-        when 'today', nil
-          Date.today
-        when 'yesterday'
-          Date.today.prev_day
-        else
-          Date.parse(date_input)
-        end
       end
     end
   end

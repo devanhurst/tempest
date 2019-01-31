@@ -4,7 +4,7 @@ module Tempest
       def self.included(thor)
         thor.class_eval do
           no_commands do
-            def confirm(message, options)
+            def confirm(message, options = {})
               return if options['autoconfirm']
               response = ask(message)
               abort('Aborting.') unless %w[y yes].include?(response.downcase)
