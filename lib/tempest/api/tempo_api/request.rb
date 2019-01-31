@@ -13,7 +13,7 @@ module TempoAPI
         request_method,
         request_path,
         headers: headers,
-        body: request_body,
+        body: request_body.to_json,
         query: query_params
       )
       true

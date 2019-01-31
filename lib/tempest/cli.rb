@@ -16,6 +16,7 @@ require_relative 'api/tempo_api/authorization'
 require_relative 'api/tempo_api/requests/create_worklog'
 require_relative 'api/tempo_api/requests/delete_worklog'
 require_relative 'api/tempo_api/requests/list_worklogs'
+require_relative 'api/tempo_api/requests/submit_timesheet'
 
 module Tempest
   class CLI < Thor

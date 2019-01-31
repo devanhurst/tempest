@@ -10,6 +10,8 @@ module Tempest
     class Request
       include HTTParty
 
+      DATE_FORMAT = "%Y-%m-%d".freeze
+
       def initialize(*args)
         self.class.base_uri credentials.fetch(:url)
       end
