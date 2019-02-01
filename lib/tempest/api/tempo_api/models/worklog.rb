@@ -15,17 +15,17 @@ module TempoAPI
       end
 
       def minutes
-        seconds / 60
+        seconds / 60.to_f
       end
 
       def hours
-        (minutes.to_f / 60).round(2)
+        minutes / 60.to_f
       end
 
       private
 
       def time_output
-        minutes < 60 ? "#{minutes}m" : "#{hours}h"
+        minutes < 60 ? "#{minutes.to_i}m" : "#{hours.to_i}h"
       end
     end
   end
