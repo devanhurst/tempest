@@ -33,7 +33,7 @@ module TempoAPI
       end
 
       def total_hours_spent
-        worklogs.map(&:hours).reduce(:+).round(2) || 0
+        worklogs.map(&:hours).reduce(:+)&.round(2) || 0
       end
     end
   end
