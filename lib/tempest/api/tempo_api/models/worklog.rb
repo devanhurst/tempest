@@ -14,6 +14,10 @@ module TempoAPI
         "#{id}: #{issue}: #{time_output}: #{description}"
       end
 
+      def project
+        issue.split('-').first
+      end
+
       def minutes
         seconds / 60.to_f
       end

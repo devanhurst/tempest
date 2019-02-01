@@ -1,5 +1,3 @@
-require_relative '../settings'
-
 module Tempest
   module Commands
     module Setup
@@ -31,12 +29,14 @@ module Tempest
               abort('One or more credentials were missing. Please try again.')
             end
 
+            authorization = Tempest::Settings::Authorization
+
             puts 'Setting up...'
-            Tempest::Settings.update('email', email)
-            Tempest::Settings.update('username', username)
-            Tempest::Settings.update('subdomain', subdomain)
-            Tempest::Settings.update('jira_token', jira_token)
-            Tempest::Settings.update('tempo_token', tempo_token)
+            authorization.update('email', email)
+            authorization.update('username', username)
+            authorization.update('subdomain', subdomain)
+            authorization.update('jira_token', jira_token)
+            authorization.update('tempo_token', tempo_token)
             puts 'Good to go!'
           end
 
@@ -46,13 +46,36 @@ module Tempest
             `tempest config edit` will prompt you to select a config value to edit.\n
           LONGDESC
           def config(command = nil)
+            auth = Tempest::Settings::Authorization
             if command == 'edit'
               key = ask('Which value would you like to edit?',
-                        limited_to: Tempest::Settings.keys)
+                        limited_to: auth.keys)
               new_value = ask("Please enter your new #{key}.")
-              Tempest::Settings.update(key, new_value)
+              auth.update(key, new_value)
             end
-            puts Tempest::Settings.to_s
+            puts auth.to_s
+          end
+
+          desc 'teams (new, edit)', 'Add(teams add) or modify (config edit) teams for reporting.'
+          def teams(command = nil)
+            teams = Tempest::Settings::Teams
+            if command == 'add'
+              name = ask('Please enter the name of your new team.')
+              members = ask(
+                "Please enter the members of this team.\n"\
+                '(Comma-separated, e.g. jkirk, jpicard, bsisko, kjaneway) '
+              )
+              teams.update(name, members)
+            elsif command == 'edit'
+              name = ask('Which team would you like to edit?',
+                         limited_to: teams.keys)
+              members = ask(
+                "Please enter the members of this team.\n"\
+                '(Comma-separated, e.g. jkirk, jpicard, bsisko, kjaneway) '
+              )
+              teams.update(name, members)
+            end
+            puts teams.to_s
           end
         end
       end

@@ -1,4 +1,4 @@
-require_relative '../settings'
+require_relative '../setting'
 
 module Tempest
   module API
@@ -10,7 +10,7 @@ module Tempest
       private
 
       def settings
-        Tempest::Settings
+        Tempest::Settings::Authorization
       end
     end
   end

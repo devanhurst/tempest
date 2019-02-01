@@ -1,6 +1,5 @@
 require 'httparty'
 require 'json'
-require 'yaml'
 
 require_relative './authorization'
 require_relative './response'

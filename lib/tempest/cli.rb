@@ -8,11 +8,17 @@ require_relative 'commands/helper'
 
 require_relative 'helpers/time_helper'
 
+require_relative 'services/generate_report'
+
+require_relative 'settings/authorization'
+require_relative 'settings/teams'
+
 require_relative 'api/jira_api/authorization'
 require_relative 'api/jira_api/requests/get_issue'
 require_relative 'api/jira_api/requests/get_user_issues'
 
 require_relative 'api/tempo_api/authorization'
+require_relative 'api/tempo_api/requests/get_worklog'
 require_relative 'api/tempo_api/requests/create_worklog'
 require_relative 'api/tempo_api/requests/delete_worklog'
 require_relative 'api/tempo_api/requests/list_worklogs'
