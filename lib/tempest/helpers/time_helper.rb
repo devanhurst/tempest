@@ -1,9 +1,6 @@
 module Tempest
   module Helpers
     module TimeHelper
-      DAY_NAMES = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday].freeze
-      MONTH_NAMES = %w[January February March April May June July August September October November December].freeze
-
       def parsed_time(time)
         # Returns seconds.
         return time if time.is_a?(Integer)
@@ -21,8 +18,13 @@ module Tempest
         seconds < 3600 ? "#{seconds / 60} minutes" : "#{(seconds / 3600.to_f).round(2)} hours"
       end
 
+      def formatted_date_range(start_date, end_date)
+        return formatted_date(start_date) if end_date.nil? || end_date.empty?
+        "#{formatted_date(start_date)} - #{formatted_date(end_date)}"
+      end
+
       def formatted_date(date)
-        "#{DAY_NAMES[date.wday]}, #{MONTH_NAMES[date.month - 1]} #{date.day}"
+        "#{Date::DAYNAMES[date.wday]}, #{Date::MONTHNAMES[date.month]} #{date.day}"
       end
 
       def parsed_date_input(date_input)
@@ -38,10 +40,20 @@ module Tempest
         end
       end
 
+      def beginning_of_this_week
+        Date.today - Date.today.wday
+      end
+
+      def beginning_of_week(week_number)
+        this_week_number = (Date.today + 1).cweek # Add one so weeks begin on Sunday.
+        return false unless week_number <= this_week_number
+        days_in_the_past = (this_week_number - week_number) * 7
+        beginning_of_this_week - days_in_the_past
+      end
+
       def this_week
-        sunday = Date.today - Date.today.wday
         (0..6).map do |n|
-          sunday + n
+          beginning_of_this_week + n
         end
       end
     end

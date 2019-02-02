@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Tempest
-  class Settings
+  class Setting
     class << self
       def to_s
         file.map do |key, value|
@@ -28,10 +28,6 @@ module Tempest
       def file
         Dir.mkdir(directory_path) unless Dir.exist?(directory_path)
         File.exist?(file_path) ? YAML.load_file(file_path) : {}
-      end
-
-      def file_name
-        'settings.yml'
       end
 
       def file_path

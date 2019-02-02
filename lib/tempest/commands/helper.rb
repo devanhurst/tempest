@@ -24,6 +24,12 @@ module Tempest
               puts request.response_message
             end
 
+            def get_worklog(worklog)
+              request = TempoAPI::Requests::GetWorklog.new(worklog)
+              request.send_request
+              puts request.response_message
+            end
+
             def delete_worklog(worklog)
               request = TempoAPI::Requests::DeleteWorklog.new(worklog)
               request.send_request

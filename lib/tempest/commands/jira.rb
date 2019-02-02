@@ -11,8 +11,8 @@ module Tempest
           end
 
           desc 'issues', 'Get all unresolved issues assigned to you.'
-          def issues
-            request = JiraAPI::Requests::GetUserIssues.new
+          def issues(requested_user = nil)
+            request = JiraAPI::Requests::GetUserIssues.new(requested_user)
             request.send_request
             puts request.response_message
           end

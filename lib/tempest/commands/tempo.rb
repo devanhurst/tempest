@@ -33,13 +33,16 @@ module Tempest
             e.g. `tempest list today`\n
             e.g. `tempest list yesterday`\n
             e.g. `tempest list 2019-01-31`\n
+            e.g. `tempest list 2019-01-31 --user=jsmith`
           LONGDESC
+          option :user, type: :string
+          option :end_date, type: :string
           def list(date_input = nil)
             dates = parsed_date_input(date_input)
-            dates.each do |date|
-              request = TempoAPI::Requests::ListWorklogs.new(date)
+            dates.each do |start_date|
+              request = TempoAPI::Requests::ListWorklogs.new(start_date, options['end_date'], options[:user])
               request.send_request
-              puts "\nHere are your logs for #{formatted_date(date)}:\n"
+              puts "\nHere are your logs for #{formatted_date_range(start_date, options['end_date'])}:\n"
               puts request.response_message
             end
           end
@@ -67,10 +70,28 @@ module Tempest
             puts request.response_message
           end
 
-          map 't' => 'track'
-          map 'log' => 'track'
-          map 'l' => 'list'
+          desc 'view', 'View specific worklogs.'
+          def view(*worklogs)
+            worklogs.each { |worklog| get_worklog(worklog) }
+          end
+
+          desc 'report', 'Report'
+          option :week, aliases: '-w', type: :numeric
+          option :team, aliases: '-t', type: :string
+          def report(*users)
+            team = options[:team]
+            users.push(Tempest::Settings::Teams.members(team)) if team
+            abort('No users specified.') unless users.any?
+            report = Tempest::Services::GenerateReport.new(users.flatten, options[:week])
+            puts report.to_s
+          end
+
           map 'd' => 'delete'
+          map 'l' => 'list'
+          map 'log' => 'track'
+          map 'r' => 'report'
+          map 't' => 'track'
+          map 's' => 'submit'
         end
       end
     end

@@ -5,7 +5,8 @@ module JiraAPI
   module Responses
     class GetUserIssues < JiraAPI::Response
       def message
-        issues.map(&:to_s)
+        output = issues.map(&:to_s)
+        output.empty? ? 'No issues found.' : issues
       end
 
       def issues
