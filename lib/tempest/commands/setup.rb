@@ -56,15 +56,15 @@ module Tempest
             puts auth.to_s
           end
 
-          desc 'teams (new, edit)', 'Add(teams add) or modify (config edit) teams for reporting.'
+          desc 'teams (new, edit)', 'Add (teams add) or modify (teams edit) teams for group reporting.'
           def teams(command = nil)
             teams = Tempest::Settings::Teams
             if command == 'add'
-              name = ask('Please enter the name of your new team.')
               members = ask(
                 "Please enter the members of this team.\n"\
                 '(Comma-separated, e.g. jkirk, jpicard, bsisko, kjaneway) '
               )
+              name = ask('Please enter the name of your new team.')
               teams.update(name, members)
             elsif command == 'edit'
               name = ask('Which team would you like to edit?',

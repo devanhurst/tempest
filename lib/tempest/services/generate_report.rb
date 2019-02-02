@@ -16,7 +16,9 @@ module Tempest
       end
 
       def to_s
-        reports.map(&:to_s)
+        out = "Report for period #{start_date} - #{end_date}\n"
+        reports.each { |report| out << "#{report.to_s}\n" }
+        out
       end
 
       private
