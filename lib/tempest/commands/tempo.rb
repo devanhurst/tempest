@@ -76,10 +76,9 @@ module Tempest
           end
 
           desc 'report', 'Report'
-          option :week, type: :numeric
-          option :team, type: :string
+          option :week, aliases: '-w', type: :numeric
+          option :team, aliases: '-t', type: :string
           def report(*users)
-            require 'byebug'
             team = options[:team]
             users.push(Tempest::Settings::Teams.members(team)) if team
             abort('No users specified.') unless users.any?
@@ -87,10 +86,12 @@ module Tempest
             puts report.to_s
           end
 
-          map 't' => 'track'
-          map 'log' => 'track'
-          map 'l' => 'list'
           map 'd' => 'delete'
+          map 'l' => 'list'
+          map 'log' => 'track'
+          map 'r' => 'report'
+          map 't' => 'track'
+          map 's' => 'submit'
         end
       end
     end
