@@ -21,7 +21,7 @@ module TempestTime
       end
 
       def formatted_date_range(start_date, end_date)
-        return formatted_date(start_date) if end_date.nil? || end_date.empty?
+        return formatted_date(start_date) if end_date.nil?
         "#{formatted_date(start_date)} - #{formatted_date(end_date)}"
       end
 
@@ -35,28 +35,37 @@ module TempestTime
           [Date.today]
         when 'yesterday'
           [Date.today.prev_day]
-        when 'week'
-          this_week
+        when 'week', 'thisweek'
+          week_dates(current_week)
+        when 'lastweek'
+          week_dates(current_week - 1)
         else
           [Date.parse(date_input)]
         end
       end
 
-      def beginning_of_this_week
-        Date.today - Date.today.wday
+      def current_week
+        # Helper method to make weeks start on Sunday instead of Monday.
+        @current_week ||= (Date.today + 1).cweek
       end
 
       def beginning_of_week(week_number)
-        this_week_number = (Date.today + 1).cweek # Add one so weeks begin on Sunday.
-        return false unless week_number <= this_week_number
-        days_in_the_past = (this_week_number - week_number) * 7
-        beginning_of_this_week - days_in_the_past
+        return unless week_number.positive? && week_number < 53
+        (Date.today - Date.today.wday) - ((current_week - week_number) * 7)
       end
 
-      def this_week
-        (0..6).map do |n|
-          beginning_of_this_week + n
+      def week_beginnings
+        @week_beginnings ||= (1..52).map { |week_number| beginning_of_week(week_number) }
+      end
+
+      def week_ranges
+        @week_ranges ||= week_beginnings.map do |start_date|
+          formatted_date_range(start_date, start_date + 6)
         end
+      end
+
+      def week_dates(week_number)
+        (0..6).map { |days| beginning_of_week(week_number) + days }
       end
     end
   end

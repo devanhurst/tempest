@@ -12,14 +12,17 @@ module TempestTime
 
       def initialize(users, options)
         @users = users || []
-        @options = options
+        @team = options[:team]
+        @week = options[:week]
       end
 
       def execute(input: $stdin, output: $stdout)
-        team = @options[:team]
-        @users = prompt_for_input if @users.empty? && team.nil?
-        @users.push(TempestTime::Settings::Teams.members(team)) if team
+        @users = user_prompt if @users.empty? && @team.nil?
+        @users.push(TempestTime::Settings::Teams.members(@team)) if @team
         abort('No users specified.') unless @users.any?
+
+        @week ||= week_prompt
+
         with_spinner('Generating report...') do |spinner|
           table = render_table
           spinner.stop(pastel.green('Your report is ready!'))
@@ -35,11 +38,11 @@ module TempestTime
 
       def report
         @report ||= TempestTime::Services::GenerateReport.new(
-          @users.flatten, @options[:week]
+          @users.flatten, @week
         )
       end
 
-      def prompt_for_input
+      def user_prompt
         type = prompt.select(
           "Generate a report for a #{pastel.green('user')} or #{pastel.green('team')}?",
           ['User', 'Team']
@@ -52,6 +55,16 @@ module TempestTime
           teams.keys
         )
         teams.members(team)
+      end
+
+      def week_prompt
+        week = TTY::Prompt.new.select(
+          'Please select the week to report.',
+          week_ranges,
+          default: current_week,
+          per_page: 5
+        )
+        week_ranges.find_index(week) + 1
       end
 
       def table_headings
