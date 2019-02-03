@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tempest_time_time (0.4.2)
+    tempest_time (0.4.2)
       git (~> 1.5)
       httparty (~> 0.16)
       pastel (~> 0.7.2)
@@ -127,7 +127,7 @@ DEPENDENCIES
   byebug (~> 10.0)
   minitest (~> 5.0)
   rake (~> 10.0)
-  tempest_time_time!
+  tempest_time!
 
 BUNDLED WITH
    1.16.1

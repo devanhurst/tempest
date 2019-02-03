@@ -1,57 +1,92 @@
 require 'thor'
 require 'git'
 
-require_relative 'commands/setup'
-require_relative 'commands/tempo'
-require_relative 'commands/jira'
-require_relative 'commands/helper'
-
-require_relative 'helpers/time_helper'
-
-require_relative 'services/generate_report'
-
-require_relative 'settings/authorization'
-require_relative 'settings/teams'
-
-require_relative 'api/jira_api/authorization'
-require_relative 'api/jira_api/requests/get_issue'
-require_relative 'api/jira_api/requests/get_user_issues'
-
-require_relative 'api/tempo_api/authorization'
-require_relative 'api/tempo_api/requests/get_worklog'
-require_relative 'api/tempo_api/requests/create_worklog'
-require_relative 'api/tempo_api/requests/delete_worklog'
-require_relative 'api/tempo_api/requests/list_worklogs'
-require_relative 'api/tempo_api/requests/submit_timesheet'
-
 module TempestTime
   class CLI < Thor
-    include TempestTime::Commands::Setup
-    include TempestTime::Commands::Jira
-    include TempestTime::Commands::Tempo
-    include TempestTime::Commands::Helper
-    include TempestTime::Helpers::TimeHelper
-
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc 'version', 'tempest_time version'
+    desc 'version', 'Show version number.'
     def version
       require_relative 'version'
       puts "v#{TempestTime::VERSION}"
     end
     map %w(--version -v) => :version
 
-    desc 'config', 'Command description...'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    def config(*)
-      if options[:help]
-        invoke :help, ['config']
-      else
-        require_relative 'commands/config'
-        TempestTimeTime::Commands::Config.new(options).execute
-      end
+    require_relative 'commands/config'
+    register TempestTime::Commands::Config,
+             'config', 'config [SUBCOMMAND]',
+             'Setup or modify user settings.'
+
+    require_relative 'commands/teams'
+    register TempestTime::Commands::Teams,
+             'teams', 'teams [SUBCOMMAND]',
+             'Add or modify teams.'
+
+    desc 'list [DATE]', 'List worklogs for given date. (Defaults to today.)'
+    long_desc <<-LONGDESC
+      `tempest list` will list a day's worklogs.\n
+      e.g. `tempest list today`\n
+      e.g. `tempest list yesterday`\n
+      e.g. `tempest list 2019-01-31`\n
+      e.g. `tempest list 2019-01-31 --user=jsmith`
+    LONGDESC
+    def list(date = nil)
+      require_relative 'commands/list'
+      TempestTime::Commands::List.new(date, options).execute
+    end
+
+
+    desc 'submit', 'Submit your timesheet to a supervisor.'
+    def submit(*)
+      require_relative 'commands/submit'
+      TempestTime::Commands::Submit.new(options).execute
+    end
+
+    desc 'report', 'Generate a user or team report.'
+    option :week, aliases: '-w', type: :numeric
+    option :team, aliases: '-t', type: :string
+    def report(*users)
+      require_relative 'commands/report'
+      TempestTime::Commands::Report.new(users, options).execute
+    end
+
+    desc 'delete [WORKLOG(S)]', 'Delete worklogs.'
+    long_desc <<-LONGDESC
+      `tempest_time delete` will delete the specified worklogs.\n
+      e.g. `tempest delete 12345`\n
+      e.g. `tempest delete 12345 12346 12347`\n
+    LONGDESC
+    option :autoconfirm, type: :boolean
+    def delete(*worklogs)
+      require_relative 'commands/delete'
+      TempestTime::Commands::Delete.new(worklogs, options).execute
+    end
+
+    desc 'issues', "View a list of a user's assigned tickets. (Defaults to you.)"
+    def issues(user = nil)
+      require_relative 'commands/issues'
+      TempestTime::Commands::Issues.new(user, options).execute
+    end
+
+    desc "track [TIME] [TICKET(S)]", 'Track time to Tempo.'
+    long_desc <<-LONGDESC
+            `tempest track` or `tempest log` will track the specified number of hours or minutes to the ticket(s) specified.\n
+            If not specified, it will check the name of the current git branch and automatically track the logged time to that ticket, if found.\n
+            You can also split a bank of time evenly across multiple tickets with the --split flag.\n
+            e.g. tempest track 1.5h BCIT-1 --message='Tracking 1.5 hours.'\n
+            e.g. tempest log 90m BCIT-1 BCIT-2 --message='Tracking 90 minutes.'\n
+            e.g. tempest track 3h BCIT-1 BCIT-2 BCIT-3 --message='Tracking 1 hour.'\n
+    LONGDESC
+    option :message, aliases: '-m', type: :string
+    option :date, aliases: '-d', type: :string
+    option :remaining, aliases: '-r', type: :string
+    option :billable, aliases: '-b', type: :boolean, default: true
+    option :split, aliases: '-s', type: :boolean, default: false
+    option :autoconfirm, type: :boolean, default: false
+    def track(time, *tickets)
+      require_relative 'commands/track'
+      TempestTime::Commands::Track.new(time, tickets, options).execute
     end
   end
 end

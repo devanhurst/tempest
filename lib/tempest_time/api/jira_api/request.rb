@@ -16,7 +16,7 @@ module JiraAPI
         query: query_params,
         basic_auth: basic_auth
       )
-      true
+      response
     end
 
     private

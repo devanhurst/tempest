@@ -7,28 +7,12 @@ module TempestTime
       EXPECTED_SECONDS = (37.5 * 60 * 60).to_i.freeze
       INTERNAL_PROJECT = 'BCIT'.freeze
 
-      attr_reader :user, :worklogs
+      attr_reader :user, :worklogs, :number_of_users
 
-      def initialize(user, worklogs)
+      def initialize(user, worklogs, number_of_users = 1)
         @user = user
         @worklogs = worklogs
-      end
-
-      def to_s
-        out = ''
-        out << "#{braced(user)}"
-        out << "#{braced("COMP: #{with_percent_sign(total_compliance_percentage)}")}"
-        out << "#{braced("UTIL: #{with_percent_sign(utilization_percentage)}")}"
-        project_compliance_percentages.each do |project, percentage|
-          out << "#{braced("#{project}: #{with_percent_sign(percentage)}")}"
-        end
-        out
-      end
-
-      private
-
-      def project_worklogs
-        @project_worklogs ||= worklogs.group_by(&:project)
+        @number_of_users = number_of_users
       end
 
       def project_total_times
@@ -38,7 +22,7 @@ module TempestTime
       end
 
       def compliance_percentage(time)
-        (time.to_f / EXPECTED_SECONDS).round(2)
+        (time.to_f / (EXPECTED_SECONDS * number_of_users)).round(2)
       end
 
       def project_compliance_percentages
@@ -59,7 +43,15 @@ module TempestTime
       end
 
       def time_logged_seconds(logs)
-        logs.map(&:seconds).reduce(:+)
+        logs.flat_map(&:seconds).reduce(:+)
+      end
+
+      def project_worklogs
+        @project_worklogs ||= worklogs.group_by(&:project)
+      end
+
+      def projects
+        @projects ||= project_worklogs.keys.sort
       end
     end
   end

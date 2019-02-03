@@ -3,9 +3,9 @@ require 'yaml'
 module TempestTime
   class Setting
     class << self
-      def to_s
+      def contents
         file.map do |key, value|
-          "#{key}: #{value}\n"
+          { key => value }
         end
       end
 
@@ -14,12 +14,17 @@ module TempestTime
       end
 
       def keys
-        file.keys
+        file.keys.sort
       end
 
       def update(key, value)
         temp = file
         temp[key] = value
+        File.open(file_path, 'w') { |f| f.write temp.to_yaml }
+      end
+
+      def delete(key)
+        temp = file.tap { |f| f.delete(key) }
         File.open(file_path, 'w') { |f| f.write temp.to_yaml }
       end
 

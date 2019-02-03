@@ -5,7 +5,7 @@ module TempestTime
     class Teams < TempestTime::Setting
       class << self
         def members(team)
-          read(team).delete(' ').split(',')
+          read(team)&.sort
         end
 
         private

@@ -15,10 +15,16 @@ module TempestTime
         @reports = build_reports if valid?
       end
 
-      def to_s
-        out = "Report for period #{start_date} - #{end_date}\n"
-        reports.each { |report| out << "#{report.to_s}\n" }
-        out
+      def projects
+        @projects ||= reports.flat_map(&:projects).uniq
+      end
+
+      def aggregate
+        @aggregate ||= TempestTime::Models::Report.new(
+          'TOTAL',
+          reports.flat_map(&:worklogs),
+          users.count
+        )
       end
 
       private

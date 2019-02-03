@@ -5,7 +5,7 @@ module JiraAPI
     class Issue
       include TempestTime::Helpers::FormattingHelper
 
-      attr_reader :fields, :name, :key
+      attr_reader :fields, :summary, :key
 
       def initialize(issue)
         @key = issue['key']
@@ -16,16 +16,12 @@ module JiraAPI
         @remaining_estimate ||= fields.dig('timetracking', 'remainingEstimateSeconds')
       end
 
-      def name
-        @name ||= fields.dig('summary')
+      def summary
+        @summary ||= fields.dig('summary')
       end
 
       def status
         @status ||= fields.dig('status', 'name')
-      end
-
-      def to_s
-        "#{braced(status, 20)} #{braced(key, 10)} #{name}"
       end
     end
   end

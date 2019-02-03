@@ -1,4 +1,4 @@
 require 'tempest_time/version'
 
-module TempestTimeTime
+module TempestTime
 end

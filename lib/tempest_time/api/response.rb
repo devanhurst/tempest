@@ -27,7 +27,7 @@ module TempestTime
       end
 
       def failure_message
-        'Something went wrong... please try again later.'
+        'Failed!'
       end
     end
   end

@@ -1,4 +1,4 @@
-require_relative '../setting'
+require_relative '../settings/authorization'
 
 module TempestTime
   module API

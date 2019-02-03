@@ -15,7 +15,7 @@ module TempoAPI
         body: request_body.empty? ? request_body : request_body.to_json,
         query: query_params
       )
-      true
+      response
     end
 
     private

@@ -1,3 +1,5 @@
+require 'date'
+
 module TempestTime
   module Helpers
     module TimeHelper

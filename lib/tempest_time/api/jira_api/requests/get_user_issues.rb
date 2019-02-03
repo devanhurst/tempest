@@ -4,14 +4,14 @@ require_relative '../responses/get_user_issues'
 module JiraAPI
   module Requests
     class GetUserIssues < JiraAPI::Request
+      attr_reader :requested_user
+
       def initialize(requested_user = nil)
         super
         @requested_user = requested_user || username
       end
 
       private
-
-      attr_reader :requested_user
 
       def request_method
         'get'

@@ -21,7 +21,7 @@ module TempoAPI
       end
 
       def success_message
-        "Worklog #{worklog_id} created! Logged #{formatted_time(seconds)} to #{issue_key}!"
+        "Worklog #{worklog_id} created!"
       end
     end
   end

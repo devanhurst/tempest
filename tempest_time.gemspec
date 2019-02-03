@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'tempest_time/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'tempest_time_time'
+  spec.name          = 'tempest_time'
   spec.version       = TempestTime::VERSION
   spec.licenses      = ['MIT']
 
@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Smart console-based Tempo time tracking!}
   spec.description   = %q{Log your Tempo hours directly from the command line!}
-  spec.homepage      = 'https://github.com/devanhurst/tempest_time_time'
+  spec.homepage      = 'https://github.com/devanhurst/tempest_time'
 
   spec.required_ruby_version = '~> 2.3'
 
