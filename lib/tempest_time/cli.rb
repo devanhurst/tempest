@@ -23,17 +23,11 @@ module TempestTime
              'teams', 'teams [SUBCOMMAND]',
              'Add or modify teams.'
 
-    desc 'list [DATE]', 'List worklogs for given date. (Defaults to today.)'
-    long_desc <<-LONGDESC
-      `tempest list` will list a day's worklogs.\n
-      e.g. `tempest list today`\n
-      e.g. `tempest list yesterday`\n
-      e.g. `tempest list 2019-01-31`\n
-      e.g. `tempest list 2019-01-31 --user=jsmith`
-    LONGDESC
-    def list(date = nil)
+    desc 'list', 'List worklogs for a specific date.'
+    option :user, aliases: '-u', type: :string
+    def list
       require_relative 'commands/list'
-      TempestTime::Commands::List.new(date, options).execute
+      TempestTime::Commands::List.new(options).execute
     end
 
 

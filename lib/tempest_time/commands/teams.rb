@@ -20,7 +20,7 @@ module TempestTime
         TempestTime::Commands::Teams::Edit.new(options).execute
       end
 
-      desc 'delete', 'Edit a team.'
+      desc 'delete', 'Delete a team.'
       def delete(*)
         require_relative 'teams/delete'
         TempestTime::Commands::Teams::Delete.new(options).execute

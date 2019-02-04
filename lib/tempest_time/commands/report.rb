@@ -2,8 +2,9 @@
 
 require_relative '../command'
 require_relative '../settings/teams'
-require_relative '../services/generate_report'
 require_relative '../helpers/time_helper'
+require_relative '../api/tempo_api/requests/list_worklogs'
+require_relative '../models/report'
 
 module TempestTime
   module Commands
@@ -13,7 +14,6 @@ module TempestTime
       def initialize(users, options)
         @users = users || []
         @team = options[:team]
-        @week = options[:week]
       end
 
       def execute(input: $stdin, output: $stdout)
@@ -21,14 +21,14 @@ module TempestTime
         @users.push(TempestTime::Settings::Teams.members(@team)) if @team
         abort('No users specified.') unless @users.any?
 
-        @week ||= week_prompt
+        @week = week_prompt('Please select the week to report.')
 
         with_spinner('Generating report...') do |spinner|
           table = render_table
           spinner.stop(pastel.green('Your report is ready!'))
-          date_range = "#{formatted_date(report.start_date)}"\
+          date_range = "#{formatted_date(start_date)}"\
                        ' to '\
-                       "#{formatted_date(report.end_date)}"
+                       "#{formatted_date(end_date)}"
           prompt.say("\nReport for #{pastel.green(date_range)}")
           puts table
         end
@@ -36,60 +36,91 @@ module TempestTime
 
       private
 
-      def report
-        @report ||= TempestTime::Services::GenerateReport.new(
-          @users.flatten, @week
-        )
-      end
-
       def user_prompt
         type = prompt.select(
-          "Generate a report for a #{pastel.green('user')} or #{pastel.green('team')}?",
-          ['User', 'Team']
+          'Generate a report for a '\
+          "#{pastel.green('team')} or a specific #{pastel.green('user')}?",
+          %w[Team User]
         )
-        return [prompt.ask('Which user would you like to analyse?')] if type == 'User'
+
+        if type == 'User'
+          return [
+            prompt.ask("Please enter a #{pastel.green('user')}.")
+          ]
+        end
+
         teams = TempestTime::Settings::Teams
-        abort('You have no teams yet! Go make one! (tempest teams add)') unless teams.keys.any?
+        if teams.keys.empty?
+          abort('You have no teams yet! Go make one! (tempest teams add)')
+        end
+
         team = prompt.select(
-          "Which #{pastel.green('team')} would you like to analyse?",
+          "Please select a #{pastel.green('team')}.",
           teams.keys
         )
         teams.members(team)
       end
 
-      def week_prompt
-        week = TTY::Prompt.new.select(
-          'Please select the week to report.',
-          week_ranges,
-          default: current_week,
-          per_page: 5
+      def start_date
+        @start_date ||= week_dates(@week).first
+      end
+
+      def end_date
+        @end_date ||= week_dates(@week).last
+      end
+
+      def reports
+        @reports ||= @users.map do |user|
+          list = TempoAPI::Requests::ListWorklogs.new(
+            start_date,
+            end_date,
+            user
+          ).send_request
+          TempestTime::Models::Report.new(user, list.worklogs)
+        end || []
+      end
+
+      def aggregate
+        @aggregate ||= TempestTime::Models::Report.new(
+          'TOTAL',
+          reports.flat_map(&:worklogs),
+          @users.count
         )
-        week_ranges.find_index(week) + 1
+      end
+
+      def projects
+        @projects ||= reports.flat_map(&:projects).uniq
       end
 
       def table_headings
-        %w[User COMP% UTIL%] + report.projects
+        %w[User COMP% UTIL%] + projects
       end
 
       def render_table
         t = table.new(
           table_headings,
-          report.reports.map { |r| row(r) } + [row(report.aggregate)]
+          reports.map { |r| row(r) } + [row(aggregate)]
         )
 
         t.render(:ascii, padding: [0, 1])
       end
 
-      def row(r)
+      def row(data)
         row = [
-          r.user,
-          r.total_compliance_percentage.round(2),
-          r.utilization_percentage.round(2)
+          data.user,
+          percentage(data.total_compliance_percentage),
+          percentage(data.utilization_percentage)
         ]
-        report.projects.each do |project|
-          row.push(r.project_compliance_percentages.to_h.fetch(project, 0).round(2))
+        projects.each do |project|
+          row.push(
+            percentage(data.project_compliance_percentages.to_h.fetch(project, 0))
+          )
         end
         row
+      end
+
+      def percentage(decimal)
+        (decimal * 100).to_i.to_s + '%'
       end
     end
   end

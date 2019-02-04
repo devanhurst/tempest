@@ -7,12 +7,12 @@ module TempoAPI
     class SubmitTimesheet < TempoAPI::Request
       include TempestTime::Helpers::TimeHelper
 
-      attr_reader :reviewer, :week_number
+      attr_reader :reviewer, :dates
 
-      def initialize(reviewer, week_number)
+      def initialize(reviewer, dates)
         super
         @reviewer = reviewer
-        @week_number = week_number
+        @dates = dates
       end
 
       private
@@ -30,7 +30,6 @@ module TempoAPI
       end
 
       def query_params
-        dates = week_dates(week_number)
         {
           from: dates.first.strftime(DATE_FORMAT),
           to: dates.last.strftime(DATE_FORMAT)

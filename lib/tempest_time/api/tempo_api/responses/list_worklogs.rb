@@ -7,7 +7,7 @@ module TempoAPI
     class ListWorklogs < TempoAPI::Response
       include TempestTime::Helpers::TimeHelper
 
-      attr_reader :worklogs
+      attr_reader :worklogs, :total_hours_spent
 
       def worklogs
         @worklogs ||= raw_response['results'].map do |worklog|
@@ -18,18 +18,6 @@ module TempoAPI
             description: worklog['description']
           )
         end
-      end
-
-      private
-
-      def success_message
-        output = ""
-        output << worklogs_output
-        output << "\nTOTAL TIME LOGGED: #{total_hours_spent} hours."
-      end
-
-      def worklogs_output
-        worklogs.map(&:to_s).join("\n")
       end
 
       def total_hours_spent

@@ -13,11 +13,15 @@ module TempestTime
           return time.chomp('m').to_i * 60
         end
 
-        abort("Please provide time in the correct format. e.g. 0.5h, .5h, 30m")
+        abort('Please provide time in the correct format. e.g. 0.5h, .5h, 30m')
       end
 
       def formatted_time(seconds)
-        seconds < 3600 ? "#{seconds / 60} minutes" : "#{(seconds / 3600.to_f).round(2)} hours"
+        if seconds < 3600
+          "#{seconds / 60} minutes"
+        else
+          "#{(seconds / 3600.to_f).round(2)} hours"
+        end
       end
 
       def formatted_date_range(start_date, end_date)
@@ -26,46 +30,45 @@ module TempestTime
       end
 
       def formatted_date(date)
-        "#{Date::DAYNAMES[date.wday]}, #{Date::MONTHNAMES[date.month]} #{date.day}"
+        Date::DAYNAMES[date.wday] +
+          ', ' +
+          Date::MONTHNAMES[date.month] +
+          ' ' +
+          date.day.to_s
       end
 
-      def parsed_date_input(date_input)
-        case date_input
-        when 'today', nil
-          [Date.today]
-        when 'yesterday'
-          [Date.today.prev_day]
-        when 'week', 'thisweek'
-          week_dates(current_week)
-        when 'lastweek'
-          week_dates(current_week - 1)
-        else
-          [Date.parse(date_input)]
+      def beginning_of_week(weeks_ago = 0)
+        return unless weeks_ago >= 0
+        (Date.today - Date.today.wday) - (weeks_ago * 7)
+      end
+
+      def end_of_week(weeks_ago = 0)
+        beginning_of_week(weeks_ago) + 6
+      end
+
+      def week_beginnings(number_of_weeks)
+        (0..number_of_weeks).map { |weeks_ago| beginning_of_week(weeks_ago) }
+      end
+
+      def past_week_selections(number_of_weeks)
+        weeks = {}
+        week_beginnings(number_of_weeks).each do |beginning|
+          weeks[formatted_date_range(beginning, beginning + 6)] = beginning
         end
+        weeks
       end
 
-      def current_week
-        # Helper method to make weeks start on Sunday instead of Monday.
-        @current_week ||= (Date.today + 1).cweek
-      end
-
-      def beginning_of_week(week_number)
-        return unless week_number.positive? && week_number < 53
-        (Date.today - Date.today.wday) - ((current_week - week_number) * 7)
-      end
-
-      def week_beginnings
-        @week_beginnings ||= (1..52).map { |week_number| beginning_of_week(week_number) }
-      end
-
-      def week_ranges
-        @week_ranges ||= week_beginnings.map do |start_date|
-          formatted_date_range(start_date, start_date + 6)
+      def past_date_selections(number_of_days)
+        dates = {}
+        (0..number_of_days).each do |n|
+          date = Date.today - n
+          dates[formatted_date(date)] = date
         end
+        dates
       end
 
-      def week_dates(week_number)
-        (0..6).map { |days| beginning_of_week(week_number) + days }
+      def week_dates(first_day)
+        (0..6).map { |days| first_day + days }
       end
     end
   end
