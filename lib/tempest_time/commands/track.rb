@@ -21,10 +21,12 @@ module TempestTime
         time = @options[:split] ? parsed_time(@time) / @tickets.count : parsed_time(@time)
         tickets = @tickets.any? ? @tickets.map(&:upcase) : [automatic_ticket]
 
-        prompt_message = "Track #{formatted_time(time)}, "\
+        unless @options[:autoconfirm]
+          prompt_message = "Track #{formatted_time(time)}, "\
                          "#{billability(@options)}, "\
                          "to #{tickets.join(', ')}?"
-        abort unless prompt.yes?(prompt_message, convert: :bool)
+          abort unless prompt.yes?(prompt_message, convert: :bool)
+        end
 
         tickets.each do |ticket|
           track_time(time, @options.merge(ticket: ticket))
