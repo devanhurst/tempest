@@ -1,24 +1,18 @@
-require_relative '../../command'
-require_relative '../git_commands'
-require_relative 'status'
-require 'tempfile'
+# frozen_string_literal: true
 
+require_relative 'timer_base'
+require_relative 'status'
 
 module TempestTime
   module Commands
     class Timer
-      class Start < TempestTime::Command
-        include Commands::GitCommands
+      class Start < TimerBase
 
-        TEMP_DIR = '/tmp/timer/logs'.freeze
-        FILE_EXT = '.timer'.freeze
-
-        attr_reader :ticket, :timer_status
+        attr_reader :timer_status
 
         def initialize
-          @ticket = automatic_ticket
-          @timer_status = Command::Timer::Status.new(ticket)
-          ensure_tmp_dir
+          super
+          @timer_status = Commands::Timer::Status.new
         end
 
         def execute(input: $stdin, output: $stdout)
@@ -26,10 +20,6 @@ module TempestTime
         end
 
         private
-
-        def ensure_tmp_dir
-          FileUtils.mkdir_p TEMP_DIR unless File.directory? TEMP_DIR
-        end
 
         def display_status
           timer_status.display_status

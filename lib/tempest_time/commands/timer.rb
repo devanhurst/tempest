@@ -17,25 +17,25 @@ module TempestTime
       desc 'stop', 'Stop current timer.'
       def stop(*)
         require_relative 'timer/stop'
-        TempestTime::Commands::Timer::Stop.new(options).execute
+        TempestTime::Commands::Timer::Stop.new.execute
       end
 
       desc 'submit', 'Submit current timer.'
       def submit(*)
         require_relative 'timer/submit'
-        TempestTime::Commands::Timer::Submit.new(options).execute
+        TempestTime::Commands::Timer::Submit.new.execute
       end
 
       desc 'delete', 'Delete current timer.'
       def delete(*)
         require_relative 'timer/delete'
-        TempestTime::Commands::Timer::Delete.new(options).execute
+        TempestTime::Commands::Timer::Delete.new.execute
       end
 
       desc 'status', 'Current timer status.'
-      def delete(*)
+      def status(*)
         require_relative 'timer/status'
-        TempestTime::Commands::Timer::status.new(options).execute
+        TempestTime::Commands::Timer::Status.new.execute
       end
     end
   end
