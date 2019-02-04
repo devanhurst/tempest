@@ -123,6 +123,7 @@ module TempestTime
       end
 
       def percentage(decimal)
+        return '' unless decimal.positive?
         (decimal * 100).to_i.to_s + '%'
       end
     end
