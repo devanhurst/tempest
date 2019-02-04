@@ -4,12 +4,13 @@ require_relative '../command'
 require_relative '../helpers/time_helper'
 
 require_relative '../api/tempo_api/requests/create_worklog'
-require_relative '../api/jira_api/requests/get_issue'
+require_relative 'git_command'
 
 module TempestTime
   module Commands
     class Track < TempestTime::Command
       include TempestTime::Helpers::TimeHelper
+      include Commands::GitCommands
 
       def initialize(time, tickets, options)
         @time = time
@@ -54,12 +55,6 @@ module TempestTime
         end
         remaining = request.response.issue.remaining_estimate || 0
         remaining > time ? remaining - time : 0
-      end
-
-      def automatic_ticket
-        ticket = /[A-Z]+-\d+/.match(Git.open(Dir.pwd).current_branch)
-        abort('Ticket not found for this branch. Please specify.') unless ticket
-        ticket.to_s
       end
 
       def billability(options)

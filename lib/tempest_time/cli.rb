@@ -88,5 +88,9 @@ module TempestTime
       require_relative 'commands/track'
       TempestTime::Commands::Track.new(time, tickets, options).execute
     end
+
+    require_relative 'commands/timer'
+    register TempestTime::Commands::Timer,
+             'timer', 'timer [SUBCOMMAND]', 'Start, Stop, Delete, Submit Timers'
   end
 end
