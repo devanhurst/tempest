@@ -57,6 +57,12 @@ module TempestTime
       TempestTime::Commands::Delete.new(worklogs, options).execute
     end
 
+    desc 'issue', 'Open a Jira issue in your browser.'
+    def issue(issue)
+      require_relative 'commands/issue'
+      TempestTime::Commands::Issue.new(issue).execute
+    end
+
     desc 'issues', "View a list of a user's assigned tickets. (Defaults to you.)"
     def issues(user = nil)
       require_relative 'commands/issues'
