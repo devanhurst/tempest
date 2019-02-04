@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tempest_time (0.5.2)
+    tempest_time (0.5.5)
       git (~> 1.5)
       httparty (~> 0.16)
       pastel (~> 0.7.2)
