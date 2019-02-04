@@ -41,8 +41,6 @@ module TempestTime
           prompt.say(pastel.green "No timers found.")
         end
 
-        private
-
         def running_time
           logs = log_files.each_with_object([]) do |log, array|
             start_time = File.birthtime(log)
@@ -53,6 +51,8 @@ module TempestTime
 
           logs.sum
         end
+
+        private
 
         def timer_running_status
           timer_running? ? 'running' : 'stopped'

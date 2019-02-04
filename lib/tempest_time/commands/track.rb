@@ -4,7 +4,7 @@ require_relative '../command'
 require_relative '../helpers/time_helper'
 
 require_relative '../api/tempo_api/requests/create_worklog'
-require_relative 'git_command'
+require_relative 'git_commands'
 
 module TempestTime
   module Commands

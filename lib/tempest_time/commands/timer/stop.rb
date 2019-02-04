@@ -18,16 +18,13 @@ module TempestTime
         def execute(input: $stdin, output: $stdout)
           return timer_status.prompt_no_timers if timer_status.log_files.empty?
           stop_timer
+          prompt.say(pastel.green("#{ticket} Timer stopped"))
         end
-
-        private
 
         def stop_timer
           timer_status.log_files.each do |log|
             FileUtils.touch(log) if timer_status.log_running?(log)
           end
-
-          prompt.say(pastel.green("#{ticket} Timer stopped"))
         end
       end
     end

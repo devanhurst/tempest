@@ -2,11 +2,14 @@
 
 require_relative 'timer_base'
 require_relative 'status'
+require_relative '../track'
+require_relative 'delete'
+require_relative 'stop'
 
 module TempestTime
   module Commands
     class Timer
-      class Delete < TimerBase
+      class Submit < TimerBase
 
         attr_reader :timer_status
 
@@ -18,12 +21,15 @@ module TempestTime
         def execute(input: $stdin, output: $stdout)
           return timer_status.prompt_no_timers if timer_status.log_files.empty?
 
-          delete_logs
-          prompt.say(pastel.green("#{ticket} Timer deleted"))
+          Stop.new.stop_timer
+          Commands::Track.new(seconds, [ticket], 'billable' => true).execute
+          Delete.new.delete_logs
         end
 
-        def delete_logs
-          timer_status.log_files.each { |log| File.unlink log }
+        private
+
+        def seconds
+          (timer_status.running_time / 60).round.to_s + 'm'
         end
       end
     end
