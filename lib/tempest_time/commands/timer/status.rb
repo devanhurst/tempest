@@ -2,12 +2,13 @@
 
 require_relative 'timer_base'
 require 'tempfile'
-require 'byebug'
+require_relative '../../helpers/time_helper'
 
 module TempestTime
   module Commands
     class Timer
       class Status < TimerBase
+        include TempestTime::Helpers::TimeHelper
 
         def execute(input: $stdin, output: $stdout)
           display_status
@@ -17,7 +18,7 @@ module TempestTime
           return prompt_no_timers if log_files.empty?
 
           prompt.say(
-              pastel.green("#{ticket} #{running_time.to_i}s #{timer_running_status}")
+              pastel.green("#{ticket} #{formatted_running_time} #{timer_running_status}")
           )
         end
 
@@ -56,6 +57,10 @@ module TempestTime
 
         def timer_running_status
           timer_running? ? 'running' : 'stopped'
+        end
+
+        def formatted_running_time
+          formatted_time_long(running_time.to_i)
         end
       end
     end

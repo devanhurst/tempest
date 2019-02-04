@@ -20,6 +20,10 @@ module TempestTime
         seconds < 3600 ? "#{seconds / 60} minutes" : "#{(seconds / 3600.to_f).round(2)} hours"
       end
 
+      def formatted_time_long(seconds)
+        Time.at(seconds).utc.strftime("%H hours %M minutes %S seconds")
+      end
+
       def formatted_date_range(start_date, end_date)
         return formatted_date(start_date) if end_date.nil? || end_date.empty?
         "#{formatted_date(start_date)} - #{formatted_date(end_date)}"
