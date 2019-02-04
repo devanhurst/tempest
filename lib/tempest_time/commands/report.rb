@@ -111,20 +111,28 @@ module TempestTime
       def row(data)
         row = [
           data.user,
-          percentage(data.total_compliance_percentage),
-          percentage(data.utilization_percentage)
+          right_align(percentage(data.total_compliance_percentage)),
+          right_align(percentage(data.utilization_percentage))
         ]
         projects.each do |project|
           row.push(
-            percentage(data.project_compliance_percentages.to_h.fetch(project, 0))
+            right_align(
+              percentage(
+                data.project_compliance_percentages.to_h.fetch(project, 0)
+              )
+            )
           )
         end
         row
       end
 
+      def right_align(value)
+        { value: value, alignment: :right }
+      end
+
       def percentage(decimal)
         return '' unless decimal.positive?
-        (decimal * 100).to_i.to_s + '%'
+        (decimal * 100.0).round(1).to_s + '%'
       end
     end
   end

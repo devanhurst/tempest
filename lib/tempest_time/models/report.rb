@@ -22,7 +22,7 @@ module TempestTime
       end
 
       def compliance_percentage(time)
-        (time.to_f / (EXPECTED_SECONDS * number_of_users)).round(2)
+        (time.to_f / (EXPECTED_SECONDS * number_of_users))
       end
 
       def project_compliance_percentages
