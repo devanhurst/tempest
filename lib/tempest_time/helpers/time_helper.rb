@@ -17,11 +17,8 @@ module TempestTime
       end
 
       def formatted_time(seconds)
-        if seconds < 3600
-          "#{seconds / 60} minutes"
-        else
-          "#{(seconds / 3600.to_f).round(2)} hours"
-        end
+        return "#{seconds / 60} minutes" if seconds < 3600
+        "#{(seconds / 3600.to_f).round(2)} hours"
       end
 
       def formatted_date_range(start_date, end_date)

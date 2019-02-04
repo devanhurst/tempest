@@ -17,7 +17,7 @@ module TempoAPI
             seconds: worklog['timeSpentSeconds'],
             description: worklog['description']
           )
-        end
+        end.sort_by(&:id)
       end
 
       def total_hours_spent

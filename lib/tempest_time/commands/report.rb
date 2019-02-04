@@ -89,7 +89,10 @@ module TempestTime
       end
 
       def projects
-        @projects ||= reports.flat_map(&:projects).uniq
+        @projects ||= reports.flat_map(&:projects).uniq.sort.tap do |projects|
+          projects.delete('BCIT')
+          projects.unshift('BCIT')
+        end
       end
 
       def table_headings
