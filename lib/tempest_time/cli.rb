@@ -81,6 +81,10 @@ module TempestTime
       TempestTime::Commands::Track.new(time, issues, options).execute
     end
 
+    require_relative 'commands/timer'
+    register TempestTime::Commands::Timer,
+             'timer', 'timer [SUBCOMMAND]', 'Start, Stop, Delete, Submit Timers'
+
     map log: :track
   end
 end
