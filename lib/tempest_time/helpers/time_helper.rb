@@ -21,8 +21,13 @@ module TempestTime
         "#{(seconds / 3600.to_f).round(2)} hours"
       end
 
+      def formatted_time_for_input(seconds)
+        return "#{(seconds / 60).to_i}m" if seconds < 3600
+        "#{(seconds / 3600.to_f).round(2)}h"
+      end
+
       def formatted_time_long(seconds)
-        Time.at(seconds).utc.strftime("%H hours %M minutes %S seconds")
+        Time.at(seconds).utc.strftime("%H:%M:%S")
       end
 
       def formatted_date_range(start_date, end_date)

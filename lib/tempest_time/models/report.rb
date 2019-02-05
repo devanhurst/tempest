@@ -13,7 +13,6 @@ module TempestTime
         @user = user
         @worklogs = worklogs
         @number_of_users = number_of_users
-        require 'byebug'; byebug
       end
 
       def project_total_times

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'httparty'
 require 'json'
 
@@ -9,7 +11,7 @@ module TempestTime
     class Request
       include HTTParty
 
-      DATE_FORMAT = "%Y-%m-%d".freeze
+      DATE_FORMAT = "%Y-%m-%d"
 
       def initialize(*args)
         self.class.base_uri credentials.fetch(:url)
