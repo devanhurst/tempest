@@ -14,11 +14,12 @@ module TempestTime
       def initialize(users, options)
         @users = users || []
         @team = options[:team]
+        @teams = TempestTime::Settings::Teams.new
       end
 
       def execute(input: $stdin, output: $stdout)
         @users = user_prompt if @users.empty? && @team.nil?
-        @users.push(TempestTime::Settings::Teams.members(@team)) if @team
+        @users.push(teams.members(@team)) if @team
         abort('No users specified.') unless @users.any?
 
         @week = week_prompt('Please select the week to report.')
@@ -49,16 +50,15 @@ module TempestTime
           ]
         end
 
-        teams = TempestTime::Settings::Teams
-        if teams.keys.empty?
+        if @teams.names.empty?
           abort('You have no teams yet! Go make one! (tempest teams add)')
         end
 
         team = prompt.select(
           "Please select a #{pastel.green('team')}.",
-          teams.keys
+          @teams.names
         )
-        teams.members(team)
+        @teams.members(team)
       end
 
       def start_date

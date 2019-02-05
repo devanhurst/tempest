@@ -17,7 +17,7 @@ module TempestTime
       private
 
       def url(issue)
-        domain = TempestTime::Settings::Authorization.read('subdomain')
+        domain = TempestTime::Settings::Authorization.new.fetch('subdomain')
         "https://#{domain}.atlassian.net/browse/#{issue}"
       end
     end

@@ -3,16 +3,15 @@ require_relative '../setting'
 module TempestTime
   module Settings
     class Teams < TempestTime::Setting
-      class << self
-        def members(team)
-          read(team)&.sort
-        end
+      def initialize
+        super
+        config.filename = 'teams'
+      end
 
-        private
+      alias names keys
 
-        def file_name
-          'teams.yml'
-        end
+      def members(team)
+        config.fetch(team)&.sort
       end
     end
   end

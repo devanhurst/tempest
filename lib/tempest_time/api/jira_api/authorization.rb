@@ -9,19 +9,19 @@ module JiraAPI
     end
 
     def subdomain
-      settings.read('subdomain')
+      settings.fetch('subdomain')
     end
 
     def user
-      settings.read('username')
+      settings.fetch('username')
     end
 
     def email
-      settings.read('email')
+      settings.fetch('email')
     end
 
     def token
-      settings.read('jira_token')
+      settings.fetch('jira_token')
     end
   end
 end

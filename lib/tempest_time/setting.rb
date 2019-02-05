@@ -1,47 +1,50 @@
-require 'yaml'
+require 'tty-config'
 
 module TempestTime
   class Setting
-    class << self
-      def contents
-        file.map do |key, value|
-          { key => value }
-        end
-      end
+    attr_reader :config
 
-      def read(key)
-        file[key]
-      end
+    def initialize
+      @config = TTY::Config.new
+      config.extname = '.yml'
+      config.append_path(Dir.home + '/.tempest')
+    end
 
-      def keys
-        file.keys&.sort || []
-      end
+    def keys
+      read_config { config.to_h.keys }
+    end
 
-      def update(key, value)
-        temp = file
-        temp[key] = value
-        File.open(file_path, 'w') { |f| f.write temp.to_yaml }
-      end
+    def fetch(key)
+      read_config { config.fetch(key) }
+    end
 
-      def delete(key)
-        temp = file.tap { |f| f.delete(key) }
-        File.open(file_path, 'w') { |f| f.write temp.to_yaml }
-      end
+    def delete(key)
+      write_config { config.delete(key) }
+    end
 
-      private
+    def set(key, value)
+      write_config { config.set(key, value: value) }
+    end
 
-      def file
-        Dir.mkdir(directory_path) unless Dir.exist?(directory_path)
-        File.exist?(file_path) ? YAML.load_file(file_path) : {}
-      end
+    def remove(key, value)
+      write_config { config.remove(value, from: key) }
+    end
 
-      def file_path
-        [directory_path, file_name].join('/')
-      end
+    def append(key, value)
+      write_config { config.append(value, to: key) }
+    end
 
-      def directory_path
-        "#{Dir.home}/.tempest"
-      end
+    private
+
+    def read_config
+      config.read
+      yield
+    end
+
+    def write_config
+      config.read
+      yield
+      config.write(force: true)
     end
   end
 end
