@@ -12,7 +12,7 @@ module TempestTime
         end
 
         def execute(input: $stdin, output: $stdout)
-          settings = TempestTime::Settings::Authorization
+          settings = TempestTime::Settings::Authorization.new
           setting = prompt.select(
             "Which #{pastel.green('setting')} would you like to edit?",
             settings.keys
@@ -20,11 +20,11 @@ module TempestTime
 
           new_value = prompt.ask(
             "Enter the #{pastel.green('new value')}.",
-            default: settings.read(setting)
+            default: settings.fetch(setting)
           )
 
-          if new_value != settings.read(setting)
-            settings.update(setting, new_value)
+          if new_value != settings.fetch(setting)
+            settings.set(setting, new_value)
             prompt.say(pastel.green('Setting updated!'))
           else
             prompt.say('Nothing changed.')

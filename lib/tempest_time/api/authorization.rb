@@ -10,7 +10,7 @@ module TempestTime
       private
 
       def settings
-        TempestTime::Settings::Authorization
+        TempestTime::Settings::Authorization.new
       end
     end
   end

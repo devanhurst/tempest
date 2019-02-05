@@ -15,15 +15,9 @@ module TempestTime
       end
 
       desc 'edit', 'Modify your user credentials.'
-      method_option :help, aliases: '-h', type: :boolean,
-                           desc: 'Display usage information'
       def edit(*)
-        if options[:help]
-          invoke :help, ['auth']
-        else
-          require_relative 'config/edit'
-          TempestTime::Commands::Config::Edit.new(options).execute
-        end
+        require_relative 'config/edit'
+        TempestTime::Commands::Config::Edit.new(options).execute
       end
     end
   end

@@ -12,7 +12,7 @@ module TempestTime
         end
 
         def execute(input: $stdin, output: $stdout)
-          teams = TempestTime::Settings::Teams
+          teams = TempestTime::Settings::Teams.new
           message =
             'Please enter ' + pastel.green('the members') + " of this team. "\
             '(Comma-separated, e.g. jkirk, jpicard, bsisko, kjaneway) '
@@ -20,7 +20,7 @@ module TempestTime
             q.convert ->(input) { input.split(/,\s*/) }
           end
           name = prompt.ask('Please enter ' + pastel.green('the name') + ' of your new team.')
-          teams.update(name, members)
+          teams.set(name, members)
           prompt.say(pastel.green('Success!'))
         end
       end

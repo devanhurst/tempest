@@ -12,11 +12,11 @@ module TempestTime
         end
 
         def execute(input: $stdin, output: $stdout)
-          teams = TempestTime::Settings::Teams
-          abort("There are no teams to edit!") unless teams.keys.any?
+          teams = TempestTime::Settings::Teams.new
+          abort("There are no teams to edit!") unless teams.names.any?
           team = prompt.select(
             "Which #{pastel.green('team')} would you like to edit?",
-            teams.keys
+            teams.names
           )
 
           members = teams.members(team)
@@ -25,23 +25,21 @@ module TempestTime
             members + ['Add New Member']
           )
 
-          replace = prompt.ask(
+          replacement = prompt.ask(
             "Enter the #{pastel.green('new name')}. "\
             "Leave blank to #{pastel.red('delete')}."
           )
 
-          members.delete(member)
+          teams.remove(team, member)
 
-          if replace.nil?
-            teams.update(team, members)
+          if replacement.nil?
             prompt.say("Deleted #{pastel.red(member)}!")
           else
-            members.push(replace)
-            teams.update(team, members)
-            prompt.say("Added #{pastel.green(replace)}")
+            teams.append(team, replacement)
+            prompt.say("Added #{pastel.green(replacement)}")
           end
 
-          execute if prompt.yes?('Keep editing?')
+          execute unless prompt.no?('Keep editing?')
         end
       end
     end

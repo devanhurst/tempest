@@ -39,13 +39,13 @@ module TempestTime
             )
           end
 
-          authorization = TempestTime::Settings::Authorization
+          authorization = TempestTime::Settings::Authorization.new
 
-          authorization.update('email', email)
-          authorization.update('username', username)
-          authorization.update('subdomain', subdomain)
-          authorization.update('jira_token', jira_token)
-          authorization.update('tempo_token', tempo_token)
+          authorization.set('email', email)
+          authorization.set('username', username)
+          authorization.set('subdomain', subdomain)
+          authorization.set('jira_token', jira_token)
+          authorization.set('tempo_token', tempo_token)
 
           puts pastel.green('Setup complete!')
         end

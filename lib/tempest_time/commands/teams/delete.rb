@@ -8,18 +8,18 @@ module TempestTime
     class Teams
       class Delete < TempestTime::Command
         def initialize(options)
+          @teams = TempestTime::Settings::Teams.new
           @options = options
         end
 
         def execute(input: $stdin, output: $stdout)
-          teams = TempestTime::Settings::Teams
-          abort("There are no teams to delete!") unless teams.keys.any?
+          abort("There are no teams to delete!") unless @teams.keys.any?
           team = prompt.select(
             "Which #{pastel.green('team')} would you like to delete?",
-            teams.keys
+            @teams.names
           )
           if prompt.yes?(pastel.red("Are you sure you want to delete #{team}?"))
-            teams.delete(team)
+            @teams.delete(team)
             prompt.say("Successfully #{pastel.red("deleted #{team}!")}")
           else
             abort('Nothing was deleted.')

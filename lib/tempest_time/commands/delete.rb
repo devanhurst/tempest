@@ -13,9 +13,13 @@ module TempestTime
 
       def execute(input: $stdin, output: $stdout)
         pluralized = @worklogs.length > 1 ? 'worklogs' : 'worklog'
-        confirm_message =
-          "Delete #{pluralized} #{pastel.green(@worklogs.join(', '))}?"
-        abort unless prompt.yes?(confirm_message)
+
+        unless @options[:autoconfirm]
+          confirm_message =
+            "Delete #{pluralized} #{pastel.green(@worklogs.join(', '))}?"
+          abort unless prompt.yes?(confirm_message)
+        end
+
         @worklogs.each { |worklog| delete_worklog(worklog) }
       end
 

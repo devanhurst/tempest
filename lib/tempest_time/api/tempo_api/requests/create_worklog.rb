@@ -8,7 +8,7 @@ module TempoAPI
         super
         @seconds = seconds
         @remaining = options['remaining']
-        @ticket = options['ticket']
+        @issue = options['issue']
         @message = options['message']
         @date = options['date'] ? Date.parse(options['date']) : Date.today
         @billable = options['billable']
@@ -16,7 +16,7 @@ module TempoAPI
 
       private
 
-      attr_reader :ticket, :remaining, :seconds, :message, :date, :billable
+      attr_reader :issue, :remaining, :seconds, :message, :date, :billable
 
       def request_method
         'post'
@@ -32,7 +32,7 @@ module TempoAPI
 
       def request_body
         {
-          "issueKey": ticket,
+          "issueKey": issue,
           "timeSpentSeconds": seconds,
           "billableSeconds": billable_time,
           "remainingEstimateSeconds": remaining,

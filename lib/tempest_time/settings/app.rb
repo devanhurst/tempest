@@ -2,10 +2,10 @@ require_relative '../setting'
 
 module TempestTime
   module Settings
-    class Authorization < TempestTime::Setting
+    class App < TempestTime::Setting
       def initialize
         super
-        config.filename = 'auth'
+        config.filename = 'config'
       end
     end
   end

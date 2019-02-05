@@ -9,15 +9,15 @@ module TempoAPI
     end
 
     def user
-      settings.read('username')
+      settings.fetch('username')
     end
 
     def email
-      settings.read('email')
+      settings.fetch('email')
     end
 
     def token
-      settings.read('tempo_token')
+      settings.fetch('tempo_token')
     end
   end
 end

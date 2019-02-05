@@ -9,23 +9,51 @@ module TempestTime
     class List < TempestTime::Command
       include TempestTime::Helpers::TimeHelper
 
-      def initialize(date, options)
-        @date = date
+      def initialize(options)
         @options = options
       end
 
       def execute(input: $stdin, output: $stdout)
-        dates = parsed_date_input(@date)
-        dates.each do |start_date|
-          request = TempoAPI::Requests::ListWorklogs.new(
-            start_date,
-            @options['end_date'],
+        @date ||= date_prompt('Please select a date.')
+
+        with_spinner("Retrieving logs for #{formatted_date(@date)}...") do |spin|
+          @response = TempoAPI::Requests::ListWorklogs.new(
+            @date,
+            nil,
             @options[:user]
+          ).send_request
+          spin.stop(pastel.green('Done!'))
+          prompt.say(render_table)
+          prompt.say(
+            'Total Time Logged: '\
+            "#{pastel.green("#{@response.total_hours_spent} hours")}"
           )
-          request.send_request
-          puts "\nHere are your logs for #{formatted_date_range(start_date, @options['end_date'])}:\n"
-          puts request.response_message
         end
+      end
+
+      private
+
+      def table_headings
+        %w[Worklog Issue Time Description]
+      end
+
+      def render_table
+        t = table.new(table_headings, @response.worklogs.map { |r| row(r) })
+        t.render(
+          :ascii,
+          padding: [0, 1],
+          column_widths: [7,10,15,30],
+          multiline: true
+        )
+      end
+
+      def row(worklog)
+        [
+          worklog.id,
+          worklog.issue,
+          formatted_time(worklog.seconds),
+          worklog.description
+        ]
       end
     end
   end
