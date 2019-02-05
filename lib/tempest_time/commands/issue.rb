@@ -15,9 +15,9 @@ module TempestTime
       end
 
       desc 'open', 'Open an issue in your browser. (Default: current branch)'
-      def open(issue = '')
+      def open(*issues)
         require_relative 'issue/open'
-        TempestTime::Commands::Issue::Open.new(issue).execute
+        TempestTime::Commands::Issue::Open.new(issues).execute
       end
     end
   end

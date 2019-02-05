@@ -7,13 +7,13 @@ module TempestTime
   module Commands
     class Issue
       class Open < TempestTime::Command
-        def initialize(issue)
-          @issue = issue.upcase
-          @issue = automatic_issue if issue.empty?
+        def initialize(issues)
+          @issues = issues.map(&:upcase)
+          @issues = [automatic_issue] if issues.empty?
         end
 
         def execute(input: $stdin, output: $stdout)
-          command.run("open #{url(@issue)}")
+          @issues.each { |issue| command.run("open #{url(issue)}") }
         end
 
         private

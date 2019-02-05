@@ -25,14 +25,14 @@ module TempestTime
         private
 
         def browser_prompt(issues)
-          abort if prompt.no?('Open an issue in your browser?')
-          issue = prompt.select(
+          abort if prompt.no?('Open any issues in your browser?')
+          selections = prompt.multi_select(
             'Select an issue to open in browser, or press ^C to quit.',
             issues.map(&:key),
             per_page: 5
           )
           require_relative 'open'
-          Open.new(issue).execute
+          Open.new(selections).execute
         end
 
         def format_output(issues)
