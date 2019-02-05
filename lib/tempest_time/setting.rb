@@ -42,7 +42,7 @@ module TempestTime
     end
 
     def write_config
-      config.read
+      config.read if config.exist?
       yield
       config.write(force: true)
     end
