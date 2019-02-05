@@ -2,9 +2,8 @@
 
 require_relative '../command'
 require_relative '../helpers/time_helper'
-
-require_relative '../api/tempo_api/requests/create_worklog'
 require_relative '../api/jira_api/requests/get_issue'
+require_relative '../api/tempo_api/requests/create_worklog'
 
 module TempestTime
   module Commands
@@ -27,7 +26,7 @@ module TempestTime
         end
 
         issues.each do |issue|
-          track_time(time, @options.merge(issue: issue))
+          track_time(time, @options.merge('issue' => issue))
         end
       end
 

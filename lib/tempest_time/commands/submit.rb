@@ -14,7 +14,6 @@ module TempestTime
       end
 
       def execute(input: $stdin, output: $stdout)
-        # Command logic goes here ...
         reviewer = prompt.ask('Who should review this timesheet? (username)')
         dates = week_dates(week_prompt('Select a week to submit.'))
 
