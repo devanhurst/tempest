@@ -23,13 +23,17 @@ module TempestTime
              'teams', 'teams [SUBCOMMAND]',
              'Add or modify teams.'
 
+    require_relative 'commands/issue'
+    register TempestTime::Commands::Issue,
+             'issue', 'issue [SUBCOMMAND]',
+             'View and modify Jira issues.'
+
     desc 'list', 'List worklogs for a specific date.'
     option :user, aliases: '-u', type: :string
     def list
       require_relative 'commands/list'
       TempestTime::Commands::List.new(options).execute
     end
-
 
     desc 'submit', 'Submit your timesheet to a supervisor.'
     def submit(*)
@@ -57,23 +61,11 @@ module TempestTime
       TempestTime::Commands::Delete.new(worklogs, options).execute
     end
 
-    desc 'issue', 'Open a Jira issue in your browser.'
-    def issue(issue)
-      require_relative 'commands/issue'
-      TempestTime::Commands::Issue.new(issue).execute
-    end
-
-    desc 'issues', "View a list of a user's assigned tickets. (Defaults to you.)"
-    def issues(user = nil)
-      require_relative 'commands/issues'
-      TempestTime::Commands::Issues.new(user, options).execute
-    end
-
-    desc "track [TIME] [TICKET(S)]", 'Track time to Tempo.'
+    desc "track [TIME] [ISSUE(S)]", 'Track time to Tempo.'
     long_desc <<-LONGDESC
-            `tempest track` or `tempest log` will track the specified number of hours or minutes to the ticket(s) specified.\n
-            If not specified, it will check the name of the current git branch and automatically track the logged time to that ticket, if found.\n
-            You can also split a bank of time evenly across multiple tickets with the --split flag.\n
+            `tempest track` or `tempest log` will track the specified number of hours or minutes to the issue(s) specified.\n
+            If not specified, it will check the name of the current git branch and automatically track the logged time to that issue, if found.\n
+            You can also split a bank of time evenly across multiple issues with the --split flag.\n
             e.g. tempest track 1.5h BCIT-1 --message='Tracking 1.5 hours.'\n
             e.g. tempest log 90m BCIT-1 BCIT-2 --message='Tracking 90 minutes.'\n
             e.g. tempest track 3h BCIT-1 BCIT-2 BCIT-3 --message='Tracking 1 hour.'\n
@@ -84,9 +76,11 @@ module TempestTime
     option :billable, aliases: '-b', type: :boolean, default: true
     option :split, aliases: '-s', type: :boolean, default: false
     option :autoconfirm, type: :boolean, default: false
-    def track(time, *tickets)
+    def track(time, *issues)
       require_relative 'commands/track'
-      TempestTime::Commands::Track.new(time, tickets, options).execute
+      TempestTime::Commands::Track.new(time, issues, options).execute
     end
+
+    map log: :track
   end
 end

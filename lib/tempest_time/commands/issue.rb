@@ -1,24 +1,23 @@
 # frozen_string_literal: true
 
-require_relative '../command'
-require_relative '../settings/authorization'
+require 'thor'
 
 module TempestTime
   module Commands
-    class Issue < TempestTime::Command
-      def initialize(issue)
-        @issue = issue.upcase
+    class Issue < Thor
+
+      namespace :issue
+
+      desc 'list', 'Set up Tempest with your credentials.'
+      def list(*)
+        require_relative 'issue/list'
+        TempestTime::Commands::Issue::List.new(options).execute
       end
 
-      def execute(input: $stdin, output: $stdout)
-        command.run("open #{url(@issue)}")
-      end
-
-      private
-
-      def url(issue)
-        domain = TempestTime::Settings::Authorization.new.fetch('subdomain')
-        "https://#{domain}.atlassian.net/browse/#{issue}"
+      desc 'open', 'Open an issue in your browser. (Default: current branch)'
+      def open(issue = '')
+        require_relative 'issue/open'
+        TempestTime::Commands::Issue::Open.new(issue).execute
       end
     end
   end

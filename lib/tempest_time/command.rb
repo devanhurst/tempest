@@ -3,12 +3,14 @@
 require 'forwardable'
 require_relative 'helpers/time_helper'
 require_relative 'helpers/formatting_helper'
+require_relative 'helpers/git_helper'
 
 module TempestTime
   class Command
     extend Forwardable
     include TempestTime::Helpers::TimeHelper
     include TempestTime::Helpers::FormattingHelper
+    include TempestTime::Helpers::GitHelper
 
     def_delegators :command, :run
 
