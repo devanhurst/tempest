@@ -8,7 +8,7 @@ module TempestTime
     class Timer
       class Status < TempestTime::Command
         def initialize(issue)
-          @issue = issue
+          @issue = issue || automatic_issue
           @timer = TempestTime::Models::Timer.new(issue)
         end
 

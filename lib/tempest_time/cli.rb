@@ -30,6 +30,7 @@ module TempestTime
 
     desc 'list', 'List worklogs for a specific date.'
     option :user, aliases: '-u', type: :string
+    option :date, aliases: '-d', type: :string
     def list
       require_relative 'commands/list'
       TempestTime::Commands::List.new(options).execute

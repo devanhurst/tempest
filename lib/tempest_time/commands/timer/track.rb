@@ -25,17 +25,21 @@ module TempestTime
         private
 
         def track_time
+          issue = prompt.ask(
+            'Which issue should this time be logged to?',
+            default: timer.issue
+          )
           time = prompt.ask(
-              "How much time should be logged to #{issue}?",
-              default: formatted_time_for_input(timer.runtime)
+            "How much time should be logged to #{issue}?",
+            default: formatted_time_for_input(timer.runtime)
           )
           billable = prompt.yes?('Is this time billable?')
           message = prompt.ask('Add a message. (optional)')
           Commands::Track.new(
-              parsed_time(time),
-              [issue],
-              'message' => message,
-              'billable' => billable
+            parsed_time(time),
+            [issue],
+            'message' => message,
+            'billable' => billable
           ).execute
         end
       end

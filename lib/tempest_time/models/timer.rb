@@ -23,7 +23,7 @@ module TempestTime
 
       def initialize(issue)
         ensure_tmp_dir
-        @issue = issue || automatic_issue
+        @issue = issue
       end
 
       def start

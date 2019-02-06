@@ -7,9 +7,8 @@ module TempestTime
   module Commands
     class Issue
       class List < TempestTime::Command
-        def initialize(options)
-          @user = options[:user] || current_user
-          @options = options
+        def initialize(user)
+          @user = user || current_user
         end
 
         def execute(input: $stdin, output: $stdout)

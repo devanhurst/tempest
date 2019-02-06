@@ -10,7 +10,8 @@ module TempestTime
       include TempestTime::Helpers::TimeHelper
 
       def initialize(options)
-        @options = options
+        @user = options[:user]
+        @date = options[:date] ? Date.parse(options[:date]) : nil
       end
 
       def execute(input: $stdin, output: $stdout)
@@ -20,7 +21,7 @@ module TempestTime
           @response = TempoAPI::Requests::ListWorklogs.new(
             @date,
             nil,
-            @options[:user]
+            @user
           ).send_request
           spin.stop(pastel.green('Done!'))
           prompt.say(render_table)
@@ -42,7 +43,7 @@ module TempestTime
         t.render(
           :ascii,
           padding: [0, 1],
-          column_widths: [7,10,15,30],
+          column_widths: [7, 10, 15, 30],
           multiline: true
         )
       end

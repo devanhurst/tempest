@@ -11,31 +11,31 @@ module TempestTime
       desc 'start [ISSUE]', 'Start a new timer, or continue a paused timer.'
       def start(issue = nil)
         require_relative 'timer/start'
-        TempestTime::Commands::Timer::Start.new(issue).execute
+        TempestTime::Commands::Timer::Start.new(issue&.upcase).execute
       end
 
       desc 'pause [ISSUE]', 'Pause a timer.'
       def pause(issue = nil)
         require_relative 'timer/pause'
-        TempestTime::Commands::Timer::Pause.new(issue).execute
+        TempestTime::Commands::Timer::Pause.new(issue&.upcase).execute
       end
 
       desc 'track [ISSUE]', 'Stop and track a timer.'
       def track(issue = nil)
         require_relative 'timer/track'
-        TempestTime::Commands::Timer::Track.new(issue).execute
+        TempestTime::Commands::Timer::Track.new(issue&.upcase).execute
       end
 
       desc 'delete [ISSUE]', 'Delete current timer.'
       def delete(issue = nil)
         require_relative 'timer/delete'
-        TempestTime::Commands::Timer::Delete.new(issue).execute
+        TempestTime::Commands::Timer::Delete.new(issue&.upcase).execute
       end
 
       desc 'status [ISSUE]', 'Display timer status.'
       def status(issue = nil)
         require_relative 'timer/status'
-        TempestTime::Commands::Timer::Status.new(issue).execute
+        TempestTime::Commands::Timer::Status.new(issue&.upcase).execute
       end
 
       desc 'list', 'Display all timers.'

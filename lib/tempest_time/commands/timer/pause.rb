@@ -2,6 +2,7 @@
 
 require_relative '../../command'
 require_relative '../../models/timer'
+require_relative './status'
 
 module TempestTime
   module Commands
