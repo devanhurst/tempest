@@ -9,6 +9,7 @@ module TempestTime
     class Timer
       class List < TempestTime::Command
         def execute(input: $stdin, output: $stdout)
+          abort(pastel.red('No timers running!')) unless all_timers.any?
           all_timers.each do |timer|
             TempestTime::Commands::Timer::Status.new(timer.issue).execute
           end
