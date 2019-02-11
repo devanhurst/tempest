@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 require_relative '../command'
-require_relative '../helpers/time_helper'
 require_relative '../api/tempo_api/requests/list_worklogs'
 
 module TempestTime
   module Commands
     class List < TempestTime::Command
-      include TempestTime::Helpers::TimeHelper
-
       def initialize(options)
         @user = options[:user]
         @date = options[:date] ? Date.parse(options[:date]) : nil

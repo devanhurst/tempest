@@ -2,15 +2,12 @@
 
 require_relative '../command'
 require_relative '../settings/teams'
-require_relative '../helpers/time_helper'
 require_relative '../api/tempo_api/requests/list_worklogs'
 require_relative '../models/report'
 
 module TempestTime
   module Commands
     class Report < TempestTime::Command
-      include TempestTime::Helpers::TimeHelper
-
       def initialize(users, options)
         @users = users || []
         @team = options[:team]

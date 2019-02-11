@@ -2,13 +2,10 @@
 
 require_relative '../command'
 require_relative '../api/tempo_api/requests/submit_timesheet'
-require_relative '../helpers/time_helper'
 
 module TempestTime
   module Commands
     class Submit < TempestTime::Command
-      include TempestTime::Helpers::TimeHelper
-
       def initialize(options)
         @options = options
       end
