@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative '../command'
-require_relative '../helpers/time_helper'
 require_relative '../api/jira_api/requests/get_issue'
 require_relative '../api/tempo_api/requests/create_worklog'
 
