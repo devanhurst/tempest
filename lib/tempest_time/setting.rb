@@ -7,7 +7,8 @@ module TempestTime
     def initialize
       @config = TTY::Config.new
       config.extname = '.yml'
-      config.append_path(Dir.home + '/.tempest')
+      config.append_path(directory)
+      Dir.mkdir(directory) unless File.exists?(directory)
     end
 
     def keys
@@ -35,6 +36,10 @@ module TempestTime
     end
 
     private
+
+    def directory
+      Dir.home + '/.tempest'
+    end
 
     def read_config
       config.read
