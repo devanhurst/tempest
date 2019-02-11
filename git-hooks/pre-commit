@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# Check for ruby style errors
+red='\033[0;31m'
+green='\033[0;32m'
+yellow='\033[0;33m'
+NC='\033[0m'
+
+RUBY_FAIL=0
+
+# Check if rubocop is installed for the current project
+rubocop -v >/dev/null 2>&1 || { echo >&2 "${red}[Ruby Style][Fatal]: Add rubocop to your Gemfile"; exit 1; }
+
+# Get only the staged files
+RUBY_FILES="$(git diff --cached --name-only --diff-filter=AMC | grep -e "\.rb$" -e "\.decorator$" | tr '\n' ' ')"
+echo "${green}[Ruby Style][Info]: Checking Ruby Style${NC}"
+
+if [ -n "$RUBY_FILES" ]
+then
+    echo "${green}[Ruby Style][Info]: ${RUBY_FILES}${NC}"
+
+    # Run rubocop on the staged files
+    rubocop --auto-correct --fail-level A --format quiet ${RUBY_FILES}
+    if [ $? -ne 0 ]; then
+      echo "${red}[Ruby Style][Error]: Errors found, autofix attempted. Check the diff and commit again${NC}"
+      git add $RUBY_FILES
+      RUBY_FAIL=1
+    fi
+else
+    echo "${green}[Ruby Style][Info]: No files to check${NC}"
+fi
+
+if [ $RUBY_FAIL == 0 ]
+then
+  echo "${yellow}[Ruby Style][Info]: Rubocop is pleased!${NC}"
+fi
+
+sleep 1
+
+if [ $RUBY_FAIL == 0 ]
+then
+  exit 0
+else
+  exit 1
+fi
