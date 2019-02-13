@@ -17,12 +17,14 @@ module TempestTime
           check_for_completion
           set_authorization_values
           with_spinner('Checking credentials...') do |spinner|
-            check_for_validity
-            spinner.stop(pastel.green("Success! You're ready to go!"))
-          rescue StandardError
-            spinner.stop(
-              pastel.red("Something isn't right... please re-run setup.")
-            )
+            begin
+              check_for_validity
+              spinner.stop(pastel.green("Success! You're ready to go!"))
+            rescue StandardError
+              spinner.stop(
+                pastel.red("Something isn't right... please re-run setup.")
+              )
+            end
           end
         end
 
