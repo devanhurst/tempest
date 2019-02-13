@@ -5,7 +5,7 @@ require 'tempfile'
 module TempestTime
   module Models
     class Timer
-      TEMP_DIR = '/tmp/timer/logs'
+      TEMP_DIR = Dir.home + '/.tempest/timer/logs'
       FILE_EXT = '.timer'
       PREFIX_SEPARATOR = '___'
 
