@@ -5,7 +5,6 @@ require 'thor'
 module TempestTime
   module Commands
     class Config < Thor
-
       namespace :config
 
       desc 'setup', 'Set up Tempest with your credentials.'

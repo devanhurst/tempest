@@ -5,7 +5,6 @@ require 'thor'
 module TempestTime
   module Commands
     class Timer < Thor
-
       namespace :timer
 
       desc 'start [ISSUE]', 'Start a new timer, or continue a paused timer.'

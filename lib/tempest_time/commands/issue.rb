@@ -5,7 +5,6 @@ require 'thor'
 module TempestTime
   module Commands
     class Issue < Thor
-
       namespace :issue
 
       desc 'list', 'List unresolved issues.'

@@ -11,8 +11,8 @@ module TempestTime
           @user = user || current_user
         end
 
-        def execute(input: $stdin, output: $stdout)
-          request = JiraAPI::Requests::GetUserIssues.new(@user)
+        def execute!
+          request = JiraAPI::Requests::GetUserIssues.new(requested_user: @user)
           message = "Getting issues for #{request.requested_user}"
           response = with_spinner(message) do |spinner|
             request.send_request.tap { spinner.stop }
@@ -36,7 +36,7 @@ module TempestTime
 
         def format_output(issues)
           table.new(
-            %w[Status Issue Summary],
+            %w(Status Issue Summary),
             issues.map { |issue| row(issue) }
           ).render(:ascii, padding: [0, 1], column_widths: [15, 10, 30])
         end

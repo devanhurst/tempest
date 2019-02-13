@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../response'
 
 module TempoAPI
@@ -8,7 +10,7 @@ module TempoAPI
       def worklog
         @worklog ||= TempoAPI::Models::Worklog.new(
           id: raw_response['tempoWorklogId'],
-          issue: raw_response.dig('issue', 'key'),
+          issue: raw_response.fetch('issue', {}).fetch('key', nil),
           seconds: raw_response['timeSpentSeconds'],
           description: raw_response['description']
         )

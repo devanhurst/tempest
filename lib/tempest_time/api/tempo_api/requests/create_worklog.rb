@@ -39,7 +39,7 @@ module TempoAPI
           "startDate": date.strftime('%Y-%m-%d'),
           "startTime": '12:00:00',
           "authorUsername": user,
-          "description": message
+          "description": message,
         }
       end
 

@@ -11,7 +11,7 @@ module TempestTime
           @options = options
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           settings = TempestTime::Settings::Authorization.new
           setting = prompt.select(
             "Which #{pastel.green('setting')} would you like to edit?",

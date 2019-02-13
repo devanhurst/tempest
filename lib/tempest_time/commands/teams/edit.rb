@@ -11,9 +11,9 @@ module TempestTime
           @options = options
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           teams = TempestTime::Settings::Teams.new
-          abort("There are no teams to edit!") unless teams.names.any?
+          abort('There are no teams to edit!') unless teams.names.any?
           team = prompt.select(
             "Which #{pastel.green('team')} would you like to edit?",
             teams.names

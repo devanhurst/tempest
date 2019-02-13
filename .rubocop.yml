@@ -1,1 +1,7 @@
 ---
+inherit_from:
+- .rubocop_airbnb.yml
+Airbnb/RiskyActiverecordInvocation:
+  Enabled: false
+Airbnb/OptArgParameters:
+  Enabled: false

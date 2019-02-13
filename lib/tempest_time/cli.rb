@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'thor'
 require 'git'
 
 module TempestTime
   class CLI < Thor
+    package_name 'Tempest'
     # Error raised by this runner
     Error = Class.new(StandardError)
 
@@ -62,7 +65,7 @@ module TempestTime
       TempestTime::Commands::Delete.new(worklogs, options).execute
     end
 
-    desc "track [TIME] [ISSUE(S)]", 'Track time to Tempo.'
+    desc 'track [TIME] [ISSUE(S)]', 'Track time to Tempo.'
     long_desc <<-LONGDESC
             `tempest track` or `tempest log` will track the specified number of hours or minutes to the issue(s) specified.\n
             If not specified, it will check the name of the current git branch and automatically track the logged time to that issue, if found.\n

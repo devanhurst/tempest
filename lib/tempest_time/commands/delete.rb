@@ -11,7 +11,7 @@ module TempestTime
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute!
         pluralized = @worklogs.length > 1 ? 'worklogs' : 'worklog'
 
         unless @options[:autoconfirm]

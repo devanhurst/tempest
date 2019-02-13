@@ -12,8 +12,8 @@ module TempestTime
           @options = options
         end
 
-        def execute(input: $stdin, output: $stdout)
-          abort("There are no teams to delete!") unless @teams.keys.any?
+        def execute!
+          abort('There are no teams to delete!') unless @teams.keys.any?
           team = prompt.select(
             "Which #{pastel.green('team')} would you like to delete?",
             @teams.names

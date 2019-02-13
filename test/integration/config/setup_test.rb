@@ -4,7 +4,7 @@ require 'tempest_time/commands/config/setup'
 class TempestTime::Commands::Config::SetupTest < Minitest::Test
   def test_executes_tempest_time_config_help_setup_command_successfully
     output = `tempest_time config help setup`
-    expect_output = <<-OUT
+    expected_output = <<-OUT
 Usage:
   tempest_time setup
 

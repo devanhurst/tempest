@@ -5,7 +5,6 @@ require_relative '../responses/get_current_user'
 
 module JiraAPI
   module Requests
-    # :no-doc:
     class GetCurrentUser < JiraAPI::Request
       private
 

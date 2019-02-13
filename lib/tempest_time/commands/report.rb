@@ -14,9 +14,12 @@ module TempestTime
         @teams = TempestTime::Settings::Teams.new
       end
 
-      def execute(input: $stdin, output: $stdout)
-        @users = user_prompt if @users.empty? && @team.nil?
-        @users.push(teams.members(@team)) if @team
+      def execute!
+        if @users.empty? && @team.nil?
+          @users = user_prompt
+        end
+
+        @users.push(@teams.members(@team)) if @team
         abort('No users specified.') unless @users.any?
 
         @week = week_prompt('Please select the week to report.')
@@ -38,12 +41,12 @@ module TempestTime
         type = prompt.select(
           'Generate a report for a '\
           "#{pastel.green('team')} or a specific #{pastel.green('user')}?",
-          %w[Team User]
+          %w(Team User)
         )
 
         if type == 'User'
           return [
-            prompt.ask("Please enter a #{pastel.green('user')}.")
+            prompt.ask("Please enter a #{pastel.green('user')}."),
           ]
         end
 
@@ -70,8 +73,8 @@ module TempestTime
         @reports ||= @users.map do |user|
           list = TempoAPI::Requests::ListWorklogs.new(
             start_date,
-            end_date,
-            user
+            end_date: end_date,
+            requested_user: user
           ).send_request
           TempestTime::Models::Report.new(user, list.worklogs)
         end || []
@@ -81,7 +84,7 @@ module TempestTime
         @aggregate ||= TempestTime::Models::Report.new(
           'TOTAL',
           reports.flat_map(&:worklogs),
-          @users.count
+          number_of_users: @users.count
         )
       end
 
@@ -93,7 +96,7 @@ module TempestTime
       end
 
       def table_headings
-        %w[User COMP% UTIL%] + projects
+        %w(User COMP% UTIL%) + projects
       end
 
       def render_table
@@ -109,7 +112,7 @@ module TempestTime
         row = [
           data.user,
           right_align(percentage(data.total_compliance_percentage)),
-          right_align(percentage(data.utilization_percentage))
+          right_align(percentage(data.utilization_percentage)),
         ]
         projects.each do |project|
           row.push(

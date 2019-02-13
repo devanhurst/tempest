@@ -12,7 +12,7 @@ module TempestTime
           @timer = TempestTime::Models::Timer.new(issue)
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           prompt.say("#{issue}: #{status_message}")
         end
 

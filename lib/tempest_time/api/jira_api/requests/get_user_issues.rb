@@ -6,7 +6,7 @@ module JiraAPI
     class GetUserIssues < JiraAPI::Request
       attr_reader :requested_user
 
-      def initialize(requested_user = nil)
+      def initialize(requested_user: nil)
         super
         @requested_user = requested_user || username
       end
@@ -24,7 +24,7 @@ module JiraAPI
       def query_params
         {
           'jql' => "assignee=#{requested_user} AND resolution is EMPTY",
-          'maxResults' => 100
+          'maxResults' => 100,
         }
       end
 

@@ -43,12 +43,12 @@ module TempestTime
       end
 
       def runtime
-        @logs ||= log_files.each_with_object([]) do |log, array|
+        @runtime ||= log_files.each_with_object([]) do |log, array|
           start_time = File.birthtime(log)
           end_time = log_running?(log) ? Time.now : File.mtime(log)
 
           array << (end_time - start_time)
-        end.sum
+        end.reduce(:+)
       end
 
       def running?

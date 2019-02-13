@@ -12,7 +12,7 @@ module TempestTime
           @timer = TempestTime::Models::Timer.new(@issue)
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           timer.delete ? deleted_message : no_timer_message
         end
 

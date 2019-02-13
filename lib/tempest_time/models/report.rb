@@ -9,7 +9,7 @@ module TempestTime
 
       attr_reader :user, :worklogs, :number_of_users
 
-      def initialize(user, worklogs, number_of_users = 1)
+      def initialize(user, worklogs, number_of_users: 1)
         @user = user
         @worklogs = worklogs
         @number_of_users = number_of_users
@@ -36,10 +36,11 @@ module TempestTime
       end
 
       def utilization_percentage
-        @utilization_percentage ||= project_compliance_percentages.inject(0) do |memo, (project, percentage)|
-          memo += percentage unless project == INTERNAL_PROJECT
-          memo
-        end
+        @utilization_percentage ||=
+          project_compliance_percentages.inject(0) do |memo, (project, percentage)|
+            memo += percentage unless project == INTERNAL_PROJECT
+            memo
+          end
       end
 
       def time_logged_seconds(logs)

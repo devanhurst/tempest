@@ -11,14 +11,14 @@ module TempestTime
         @date = options[:date] ? Date.parse(options[:date]) : nil
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute!
         @date ||= date_prompt('Please select a date.')
 
         with_spinner("Retrieving logs for #{formatted_date(@date)}...") do |spin|
           @response = TempoAPI::Requests::ListWorklogs.new(
             @date,
-            nil,
-            @user
+            end_date: nil,
+            requested_user: @user
           ).send_request
           spin.stop(pastel.green('Done!'))
           prompt.say(render_table)
@@ -32,7 +32,7 @@ module TempestTime
       private
 
       def table_headings
-        %w[Worklog Issue Time Description]
+        %w(Worklog Issue Time Description)
       end
 
       def render_table
@@ -50,7 +50,7 @@ module TempestTime
           worklog.id,
           worklog.issue,
           formatted_time(worklog.seconds),
-          worklog.description
+          worklog.description,
         ]
       end
     end

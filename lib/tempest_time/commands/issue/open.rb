@@ -12,7 +12,7 @@ module TempestTime
           @issues = [automatic_issue] if issues.empty?
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           @issues.each { |issue| command.run("open #{url(issue)}") }
         end
 

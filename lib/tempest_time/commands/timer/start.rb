@@ -13,7 +13,7 @@ module TempestTime
           @timer = TempestTime::Models::Timer.new(@issue)
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           timer.start
           TempestTime::Commands::Timer::Status.new(issue).execute
         end
