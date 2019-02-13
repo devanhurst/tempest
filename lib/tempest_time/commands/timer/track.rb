@@ -15,7 +15,7 @@ module TempestTime
           @timer = TempestTime::Models::Timer.new(@issue)
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           abort(pastel.red("No timer for #{issue}!")) unless timer.exists?
           timer.pause
           track_time

@@ -7,26 +7,23 @@ require_relative '../api/tempo_api/requests/create_worklog'
 module TempestTime
   module Commands
     class Track < TempestTime::Command
+      attr_reader :time, :issues, :options
+
       def initialize(time, issues, options)
-        @time = time
-        @issues = issues
         @options = options
+        @issues = issues.any? ? issues.map(&:upcase) : [automatic_issue]
+        @time = parsed_time(time) / issues.count
       end
 
-      def execute(input: $stdin, output: $stdout)
-        time = @options[:split] ? parsed_time(@time) / @issues.count : parsed_time(@time)
-        issues = @issues.any? ? @issues.map(&:upcase) : [automatic_issue]
-
+      def execute!
         unless @options[:autoconfirm]
           prompt_message = "Track #{formatted_time(time)}, "\
-                         "#{billability(@options)}, "\
-                         "to #{issues.join(', ')}?"
+                           "#{billability(options)}, "\
+                           "to #{issues.join(', ')}?"
           abort unless prompt.yes?(prompt_message, convert: :bool)
         end
 
-        issues.each do |issue|
-          track_time(time, @options.merge('issue' => issue))
-        end
+        issues.each { |issue| track_time(time, options.merge('issue' => issue)) }
       end
 
       private
@@ -35,10 +32,10 @@ module TempestTime
         message = "Tracking #{formatted_time(time)} to #{options['issue']}..."
         with_success_fail_spinner(message) do
           options['remaining'] = if options['remaining'].nil?
-                                 remaining_estimate(options['issue'], time)
-                               else
-                                 parsed_time(options['remaining'])
-                               end
+                                   remaining_estimate(options['issue'], time)
+                                 else
+                                   parsed_time(options['remaining'])
+                                 end
           TempoAPI::Requests::CreateWorklog.new(time, options).send_request
         end
       end

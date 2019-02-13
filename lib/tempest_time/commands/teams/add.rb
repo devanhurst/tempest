@@ -11,10 +11,10 @@ module TempestTime
           @options = options
         end
 
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           teams = TempestTime::Settings::Teams.new
           message =
-            'Please enter ' + pastel.green('the members') + " of this team. "\
+            'Please enter ' + pastel.green('the members') + ' of this team. '\
             '(Comma-separated, e.g. jkirk, jpicard, bsisko, kjaneway) '
           members = prompt.ask(message) do |q|
             q.convert ->(input) { input.split(/,\s*/) }

@@ -1,4 +1,3 @@
-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'tempest_time/version'
@@ -11,13 +10,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Devan Hurst']
   spec.email         = ['devan.hurst@gmail.com']
 
-  spec.summary       = %q{Smart CLI for Jira Cloud.}
-  spec.description   = %q{Log time and more... directly from the command line!}
+  spec.summary       = %q(Smart CLI for Jira Cloud.)
+  spec.description   = %q(Log time and more... directly from the command line!)
   spec.homepage      = 'https://github.com/devanhurst/tempest_time'
 
   spec.required_ruby_version = '~> 2.3'
 
-  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+  spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
   spec.executables   = ['tempest']
@@ -27,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'byebug', '~> 10.0'
   spec.add_development_dependency 'minitest', '~> 5.0'
   spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'rubocop-airbnb'
 
   spec.add_dependency 'git', '~>1.5'
   spec.add_dependency 'httparty', '~>0.16'

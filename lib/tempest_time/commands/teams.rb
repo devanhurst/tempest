@@ -5,7 +5,6 @@ require 'thor'
 module TempestTime
   module Commands
     class Teams < Thor
-
       namespace :config
 
       desc 'add', 'Add a team.'

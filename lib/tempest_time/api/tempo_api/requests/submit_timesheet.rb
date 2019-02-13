@@ -32,13 +32,13 @@ module TempoAPI
       def query_params
         {
           from: dates.first.strftime(DATE_FORMAT),
-          to: dates.last.strftime(DATE_FORMAT)
+          to: dates.last.strftime(DATE_FORMAT),
         }
       end
 
       def request_body
         {
-          reviewerUsername: reviewer
+          reviewerUsername: reviewer,
         }
       end
     end

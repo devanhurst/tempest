@@ -11,9 +11,9 @@ module TempestTime
     class Request
       include HTTParty
 
-      DATE_FORMAT = "%Y-%m-%d"
+      DATE_FORMAT = '%Y-%m-%d'
 
-      def initialize(*args)
+      def initialize(*_args)
         self.class.base_uri credentials.fetch(:url)
       end
 

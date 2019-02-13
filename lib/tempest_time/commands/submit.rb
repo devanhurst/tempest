@@ -10,7 +10,7 @@ module TempestTime
         @options = options
       end
 
-      def execute(input: $stdin, output: $stdout)
+      def execute!
         reviewer = prompt.ask('Who should review this timesheet? (username)')
         dates = week_dates(week_prompt('Select a week to submit.'))
 
@@ -18,7 +18,7 @@ module TempestTime
         abort unless prompt.yes?(message)
         abort unless prompt.yes?('Are you sure? No edits can be made once submitted!')
 
-        with_success_fail_spinner("Submitting your timesheet...") do
+        with_success_fail_spinner('Submitting your timesheet...') do
           TempoAPI::Requests::SubmitTimesheet.new(reviewer, dates).send_request
         end
       end

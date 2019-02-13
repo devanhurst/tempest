@@ -8,7 +8,7 @@ module TempestTime
   module Commands
     class Timer
       class List < TempestTime::Command
-        def execute(input: $stdin, output: $stdout)
+        def execute!
           abort(pastel.red('No timers running!')) unless all_timers.any?
           all_timers.each do |timer|
             TempestTime::Commands::Timer::Status.new(timer.issue).execute
@@ -33,9 +33,9 @@ module TempestTime
 
         def action_prompt(timer)
           if timer.running?
-            prompt.select('', %w[Pause Track])
+            prompt.select('', %w(Pause Track))
           else
-            prompt.select('', %w[Resume Track])
+            prompt.select('', %w(Resume Track))
           end
         end
 

@@ -4,7 +4,7 @@ require 'tempest_time/commands/config/auth'
 class TempestTime::Commands::Config::AuthTest < Minitest::Test
   def test_executes_tempest_time_config_help_auth_command_successfully
     output = `tempest_time config help auth`
-    expect_output = <<-OUT
+    expected_output = <<-OUT
 Usage:
   tempest_time auth
 

@@ -8,13 +8,12 @@ require_relative '../../api/tempo_api/requests/list_worklogs'
 module TempestTime
   module Commands
     class Config
-      # :no-doc:
       class Setup < TempestTime::Command
         def initialize(options)
           @options = options
         end
 
-        def execute
+        def execute!
           check_for_completion
           set_authorization_values
           with_spinner('Checking credentials...') do |spinner|
@@ -35,7 +34,7 @@ module TempestTime
             'username' => username,
             'subdomain' => subdomain,
             'jira_token' => jira_token,
-            'tempo_token' => tempo_token
+            'tempo_token' => tempo_token,
           }
         end
 

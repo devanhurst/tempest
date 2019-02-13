@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'tty-reader'
 require 'forwardable'
 require_relative 'helpers/time_helper'
 require_relative 'helpers/formatting_helper'
@@ -15,9 +16,15 @@ module TempestTime
     def_delegators :command, :run
 
     def execute(*)
+      execute!
+    rescue TTY::Reader::InputInterrupt
+      prompt.say(pastel.yellow("\nGoodbye!"))
+    end
+
+    def execute!(*)
       raise(
-          NotImplementedError,
-          "#{self.class}##{__method__} must be implemented"
+        NotImplementedError,
+        "#{self.class}##{__method__} must be implemented"
       )
     end
 
@@ -36,7 +43,7 @@ module TempestTime
       TTY::Prompt.new(options)
     end
 
-    def week_prompt(message, past_weeks = 51)
+    def week_prompt(message, past_weeks: 51)
       require 'tty-prompt'
       weeks = past_week_selections(past_weeks)
       TTY::Prompt.new.select(
@@ -46,7 +53,7 @@ module TempestTime
       )
     end
 
-    def date_prompt(message, past_days = 6)
+    def date_prompt(message, past_days: 6)
       require 'tty-prompt'
       dates = past_date_selections(past_days)
       TTY::Prompt.new.select(
@@ -66,13 +73,13 @@ module TempestTime
       TTY::Table
     end
 
-    def with_spinner(message, format = :pong)
+    def with_spinner(message, format: :pong)
       s = spinner.new(":spinner #{message}", format: format)
       s.auto_spin
       yield(s)
     end
 
-    def with_success_fail_spinner(message, format = :spin_3)
+    def with_success_fail_spinner(message, format: :spin_3)
       s = spinner.new(":spinner #{message}", format: format)
       s.auto_spin
       response = yield

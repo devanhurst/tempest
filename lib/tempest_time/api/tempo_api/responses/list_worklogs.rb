@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../response'
 require_relative '../models/worklog'
 require_relative '../../../helpers/time_helper'
@@ -7,13 +9,11 @@ module TempoAPI
     class ListWorklogs < TempoAPI::Response
       include TempestTime::Helpers::TimeHelper
 
-      attr_reader :worklogs, :total_hours_spent
-
       def worklogs
         @worklogs ||= results.map do |worklog|
           TempoAPI::Models::Worklog.new(
             id: worklog['tempoWorklogId'],
-            issue: worklog.dig('issue', 'key'),
+            issue: worklog.fetch('issue', {}).fetch('key', nil),
             seconds: worklog['timeSpentSeconds'],
             description: worklog['description']
           )
@@ -25,8 +25,6 @@ module TempoAPI
       end
 
       private
-
-      attr_reader :results
 
       def results
         @results = raw_response['results'] || []
