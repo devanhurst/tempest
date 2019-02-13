@@ -8,7 +8,7 @@ module TempoAPI
     class ListWorklogs < TempoAPI::Request
       attr_reader :start_date, :end_date
 
-      def initialize(start_date, end_date:, requested_user:)
+      def initialize(start_date, end_date: nil, requested_user: nil)
         super
         @start_date = start_date
         @end_date = end_date || start_date

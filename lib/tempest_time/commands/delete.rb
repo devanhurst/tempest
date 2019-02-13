@@ -26,7 +26,7 @@ module TempestTime
       private
 
       def delete_worklog(worklog)
-        with_success_fail_spinner("Deleting worklog #{worklog}...", :spin_3) do
+        with_success_fail_spinner("Deleting worklog #{worklog}...") do
           TempoAPI::Requests::DeleteWorklog.new(worklog).send_request
         end
       end
