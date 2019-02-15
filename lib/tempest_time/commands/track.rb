@@ -12,7 +12,7 @@ module TempestTime
       def initialize(time, issues, options)
         @options = options
         @issues = issues.any? ? issues.map(&:upcase) : [automatic_issue]
-        @time = parsed_time(time) / issues.count
+        @time = parsed_time(time) / @issues.count
       end
 
       def execute!
