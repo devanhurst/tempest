@@ -13,17 +13,19 @@ module TempestTime
         @options = options
         @issues = issues.any? ? issues.map(&:upcase) : [automatic_issue]
         @time = parsed_time(time) / @issues.count
+        @dates = options[:date] ? [Date.parse(options[:date])] : nil
       end
 
       def execute!
-        unless @options[:autoconfirm]
-          prompt_message = "Track #{formatted_time(time)}, "\
-                           "#{billability(options)}, "\
-                           "to #{issues.join(', ')}?"
-          abort unless prompt.yes?(prompt_message, convert: :bool)
+        dates
+        unless options[:autoconfirm]
+          confirm_prompt
         end
-
-        issues.each { |issue| track_time(time, options.merge('issue' => issue)) }
+        dates.each do |date|
+          issues.each do |issue|
+            track_time(time, options.merge({ issue: issue, date: date }))
+          end
+        end
       end
 
       private
@@ -38,6 +40,23 @@ module TempestTime
                                  end
           TempoAPI::Requests::CreateWorklog.new(time, options).send_request
         end
+      end
+
+      def dates
+        @dates ||= if options[:autoconfirm]
+                     [Date.today]
+                   else
+                     date_prompt("Select the day(s) to log this time to.",
+                                 days_before: 13,
+                                 days_after: 365).sort
+                   end
+      end
+
+      def confirm_prompt
+        prompt_message = "Track #{formatted_time(time)}, "\
+                           "#{billability(options)}, "\
+                           "to #{issues.join(', ')}?"
+        abort unless prompt.yes?(prompt_message, convert: :bool)
       end
 
       def remaining_estimate(issue, time)

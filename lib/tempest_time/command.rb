@@ -53,13 +53,14 @@ module TempestTime
       )
     end
 
-    def date_prompt(message, past_days: 6)
+    def date_prompt(message, days_before: 3, days_after: 3)
       require 'tty-prompt'
-      dates = past_date_selections(past_days)
-      TTY::Prompt.new.select(
+      dates = dates_in_range(days_before: days_before, days_after: days_after)
+      TTY::Prompt.new.multi_select(
         message,
         dates,
-        per_page: 5
+        per_page: 5,
+        default: dates.find_index { |k, v| v == Date.today } + 1
       )
     end
 

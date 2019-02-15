@@ -10,7 +10,7 @@ module TempoAPI
         @remaining = options['remaining']
         @issue = options['issue']
         @message = options['message']
-        @date = options['date'] ? Date.parse(options['date']) : Date.today
+        @date = options['date'] ? options['date'] : Date.today
         @billable = options['billable']
       end
 

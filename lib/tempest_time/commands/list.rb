@@ -8,24 +8,29 @@ module TempestTime
     class List < TempestTime::Command
       def initialize(options)
         @user = options[:user]
-        @date = options[:date] ? Date.parse(options[:date]) : nil
+        @dates = options[:date] ? [Date.parse(options[:date])] : nil
       end
 
       def execute!
-        @date ||= date_prompt('Please select a date.')
-
-        with_spinner("Retrieving logs for #{formatted_date(@date)}...") do |spin|
-          @response = TempoAPI::Requests::ListWorklogs.new(
-            @date,
-            end_date: nil,
-            requested_user: @user
-          ).send_request
-          spin.stop(pastel.green('Done!'))
-          prompt.say(render_table)
-          prompt.say(
-            'Total Time Logged: '\
-            "#{pastel.green("#{@response.total_hours_spent} hours")}"
-          )
+        @dates ||= date_prompt(
+          'Please select the dates you wish to view.',
+          days_before: 13,
+          days_after: 13
+        ).sort
+        @dates.each do |date|
+          with_spinner("Retrieving logs for #{pastel.yellow(formatted_date(date))}...") do |spin|
+            @response = TempoAPI::Requests::ListWorklogs.new(
+              date,
+              end_date: nil,
+              requested_user: @user
+            ).send_request
+            spin.stop(pastel.green('Done!'))
+            prompt.say(render_table)
+            prompt.say(
+              'Total Time Logged: '\
+              "#{pastel.green("#{@response.total_hours_spent} hours")}"
+            )
+          end
         end
       end
 

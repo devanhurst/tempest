@@ -64,10 +64,23 @@ module TempestTime
         weeks
       end
 
-      def past_date_selections(number_of_days)
+      def dates_in_range(days_before: 0, days_after: 0)
+        future_dates(days_after).merge(past_dates(days_before))
+      end
+
+      def past_dates(number_of_days)
         dates = {}
-        (0..number_of_days).each do |n|
-          date = Date.today - n
+        (0..number_of_days).each do |num|
+          date = Date.today - num
+          dates[formatted_date(date)] = date
+        end
+        dates
+      end
+
+      def future_dates(number_of_days)
+        dates = {}
+        number_of_days.downto(0).each do |num|
+          date = Date.today + num
           dates[formatted_date(date)] = date
         end
         dates
