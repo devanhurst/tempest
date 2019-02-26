@@ -12,7 +12,9 @@ module TempestTime
       class << self
         def all_timers
           issues = Dir.glob("#{TEMP_DIR}/*#{FILE_EXT}").map do |file|
-            file.delete(TEMP_DIR).split(PREFIX_SEPARATOR).first
+            file.slice!("#{TEMP_DIR}/")
+            file.slice!(FILE_EXT)
+            file.split(PREFIX_SEPARATOR).first
           end
 
           issues.uniq.sort.map { |issue| new(issue) }
