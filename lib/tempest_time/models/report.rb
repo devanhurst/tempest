@@ -4,15 +4,15 @@ module TempestTime
   module Models
     class Report
       include TempestTime::Helpers::FormattingHelper
-      EXPECTED_SECONDS = (37.5 * 60 * 60).to_i.freeze
       INTERNAL_PROJECT = 'BCIT'.freeze
 
-      attr_reader :user, :worklogs, :number_of_users
+      attr_reader :user, :worklogs, :number_of_users, :required_seconds
 
-      def initialize(user, worklogs, number_of_users: 1)
+      def initialize(user:, worklogs:, required_seconds:, number_of_users: 1)
         @user = user
         @worklogs = worklogs
         @number_of_users = number_of_users
+        @required_seconds = required_seconds * number_of_users
       end
 
       def project_total_times
@@ -22,7 +22,7 @@ module TempestTime
       end
 
       def compliance_percentage(time)
-        (time.to_f / (EXPECTED_SECONDS * number_of_users))
+        (time.to_f / (required_seconds * number_of_users))
       end
 
       def project_compliance_percentages
@@ -41,6 +41,10 @@ module TempestTime
             memo += percentage unless project == INTERNAL_PROJECT
             memo
           end
+      end
+
+      def total_seconds_logged
+        @total_seconds_logged ||= time_logged_seconds(worklogs)
       end
 
       def time_logged_seconds(logs)

@@ -3,6 +3,7 @@
 require_relative '../command'
 require_relative '../settings/teams'
 require_relative '../api/tempo_api/requests/list_worklogs'
+require_relative '../api/tempo_api/requests/get_user_schedule'
 require_relative '../models/report'
 
 module TempestTime
@@ -69,21 +70,34 @@ module TempestTime
         @end_date ||= week_dates(@week).last
       end
 
+      def required_seconds
+        @required_seconds ||= TempoAPI::Requests::GetUserSchedule.new(
+          start_date: start_date,
+          end_date: end_date,
+          requested_user: @users.first
+        ).send_request.required_seconds
+      end
+
       def reports
         @reports ||= @users.map do |user|
-          list = TempoAPI::Requests::ListWorklogs.new(
+          worklogs = TempoAPI::Requests::ListWorklogs.new(
             start_date,
             end_date: end_date,
             requested_user: user
-          ).send_request
-          TempestTime::Models::Report.new(user, list.worklogs)
+          ).send_request.worklogs
+          TempestTime::Models::Report.new(
+            user: user,
+            required_seconds: required_seconds,
+            worklogs: worklogs
+          )
         end || []
       end
 
       def aggregate
         @aggregate ||= TempestTime::Models::Report.new(
-          'TOTAL',
-          reports.flat_map(&:worklogs),
+          user: 'TOTAL',
+          worklogs: reports.flat_map(&:worklogs),
+          required_seconds: required_seconds,
           number_of_users: @users.count
         )
       end
@@ -96,7 +110,7 @@ module TempestTime
       end
 
       def table_headings
-        %w(User COMP% UTIL%) + projects
+        %w(User COMP% UTIL%) + projects + ['TOTAL HOURS']
       end
 
       def render_table
@@ -123,6 +137,12 @@ module TempestTime
             )
           )
         end
+        row.push(
+          right_align(
+            formatted_time_for_input(data.total_seconds_logged).to_s +
+              ' / ' + formatted_time_for_input(data.required_seconds).to_s
+          )
+        )
         row
       end
 
