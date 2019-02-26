@@ -7,16 +7,16 @@ module TempestTime
     class Config < Thor
       namespace :config
 
-      desc 'setup', 'Set up Tempest with your credentials.'
-      def setup(*)
-        require_relative 'config/setup'
-        TempestTime::Commands::Config::Setup.new(options).execute
+      desc 'edit', 'Modify your jira/tempo authentication settings.'
+      def auth(*)
+        require_relative 'config/auth'
+        TempestTime::Commands::Config::Auth.new(options).execute
       end
 
-      desc 'edit', 'Modify your user credentials.'
-      def edit(*)
-        require_relative 'config/edit'
-        TempestTime::Commands::Config::Edit.new(options).execute
+      desc 'app', 'Modify your app settings.'
+      def app(*)
+        require_relative 'config/app'
+        TempestTime::Commands::Config::App.new(options).execute
       end
     end
   end

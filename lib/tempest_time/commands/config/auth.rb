@@ -6,7 +6,7 @@ require_relative '../../settings/authorization'
 module TempestTime
   module Commands
     class Config
-      class Edit < TempestTime::Command
+      class Auth < TempestTime::Command
         def initialize(options)
           @options = options
         end

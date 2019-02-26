@@ -14,6 +14,15 @@ Gem::Specification.new do |spec|
   spec.description   = %q(Log time and more... directly from the command line!)
   spec.homepage      = 'https://github.com/devanhurst/tempest_time'
 
+  spec.post_install_message = %q(
+    Thank you for installing Tempest!
+
+    If this is your first time installing, please run `tempest setup` to provide your Atlassian credentials.
+
+    UPDATE: v1.2.0 makes changes to how reports are calculated!
+    If you have been using this feature, please run `tempest config app` to set up your internal project codes.
+  )
+
   spec.required_ruby_version = '~> 2.3'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|

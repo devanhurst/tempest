@@ -31,6 +31,12 @@ module TempestTime
              'issue', 'issue [SUBCOMMAND]',
              'View and modify Jira issues.'
 
+    desc 'setup', 'Perform initial Tempest setup.'
+    def setup(*)
+      require_relative 'commands/setup'
+      TempestTime::Commands::Setup.new(options).execute
+    end
+
     desc 'list', 'List worklogs for a specific date.'
     option :user, aliases: '-u', type: :string
     option :date, aliases: '-d', type: :string

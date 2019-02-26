@@ -44,6 +44,8 @@ module TempestTime
     def read_config
       config.read
       yield
+    rescue TTY::Config::ReadError
+      nil
     end
 
     def write_config

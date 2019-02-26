@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../command'
+require_relative '../settings/app'
 require_relative '../settings/teams'
 require_relative '../api/tempo_api/requests/list_worklogs'
 require_relative '../api/tempo_api/requests/get_user_schedule'
@@ -33,6 +34,7 @@ module TempestTime
                        "#{formatted_date(end_date)}"
           prompt.say("\nReport for #{pastel.green(date_range)}")
           puts table
+          display_warnings
         end
       end
 
@@ -85,10 +87,12 @@ module TempestTime
             end_date: end_date,
             requested_user: user
           ).send_request.worklogs
+
           TempestTime::Models::Report.new(
             user: user,
             required_seconds: required_seconds,
-            worklogs: worklogs
+            worklogs: worklogs,
+            internal_projects: internal_projects
           )
         end || []
       end
@@ -98,14 +102,19 @@ module TempestTime
           user: 'TOTAL',
           worklogs: reports.flat_map(&:worklogs),
           required_seconds: required_seconds,
-          number_of_users: @users.count
+          number_of_users: @users.count,
+          internal_projects: internal_projects
         )
       end
 
       def projects
         @projects ||= reports.flat_map(&:projects).uniq.sort.tap do |projects|
-          projects.delete('BCIT')
-          projects.unshift('BCIT')
+          # Put internal project codes at the front of the array.
+          internal_projects.reverse.each do |code|
+            next unless projects.include?(code)
+            projects.delete(code)
+            projects.unshift(code)
+          end
         end
       end
 
@@ -153,6 +162,22 @@ module TempestTime
       def percentage(decimal)
         return '' unless decimal.positive?
         (decimal * 100.0).round(1).to_s + '%'
+      end
+
+      def internal_projects
+        @internal_projects ||= TempestTime::Settings::App.new.fetch('internal_projects') || []
+      end
+
+      def display_warnings
+        if internal_projects.empty?
+          prompt.say(
+            pastel.yellow(
+              'You have not set any internal projects. '\
+              'To calculate utilization percentage correctly, please add an internal project. '\
+              '(`tempest config app`)'
+            )
+          )
+        end
       end
     end
   end

@@ -4,15 +4,14 @@ module TempestTime
   module Models
     class Report
       include TempestTime::Helpers::FormattingHelper
-      INTERNAL_PROJECT = 'BCIT'.freeze
+      attr_reader :user, :worklogs, :number_of_users, :required_seconds, :internal_projects
 
-      attr_reader :user, :worklogs, :number_of_users, :required_seconds
-
-      def initialize(user:, worklogs:, required_seconds:, number_of_users: 1)
+      def initialize(user:, worklogs:, required_seconds:, internal_projects:, number_of_users: 1)
         @user = user
         @worklogs = worklogs
         @number_of_users = number_of_users
         @required_seconds = required_seconds * number_of_users
+        @internal_projects = internal_projects
       end
 
       def project_total_times
@@ -38,7 +37,7 @@ module TempestTime
       def utilization_percentage
         @utilization_percentage ||=
           project_compliance_percentages.inject(0) do |memo, (project, percentage)|
-            memo += percentage unless project == INTERNAL_PROJECT
+            memo += percentage unless internal_projects.include?(project)
             memo
           end
       end
