@@ -13,7 +13,8 @@ module TempestTime
         end
 
         def execute!
-          timer.delete ? deleted_message : no_timer_message
+          timer.exists? ? deleted_message : no_timer_message
+          timer.delete
         end
 
         private
@@ -21,11 +22,15 @@ module TempestTime
         attr_reader :issue, :timer
 
         def deleted_message
-          prompt.say('baleeted')
+          prompt.say(
+            pastel.yellow(
+              "Timer #{issue} deleted at #{formatted_time_long(timer.runtime)}"
+            )
+          )
         end
 
         def no_timer_message
-          prompt.say('noleeted')
+          prompt.say(pastel.red("Timer #{issue} does not exist!"))
         end
       end
     end

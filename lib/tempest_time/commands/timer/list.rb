@@ -33,9 +33,9 @@ module TempestTime
 
         def action_prompt(timer)
           if timer.running?
-            prompt.select('', %w(Pause Track))
+            prompt.select('', %w(Pause Track Delete))
           else
-            prompt.select('', %w(Resume Track))
+            prompt.select('', %w(Resume Track Delete))
           end
         end
 
@@ -50,6 +50,9 @@ module TempestTime
           when 'Track'
             require_relative './track'
             TempestTime::Commands::Timer::Track.new(issue).execute
+          when 'Delete'
+            require_relative './delete'
+            TempestTime::Commands::Timer::Delete.new(issue).execute
           else
             abort
           end
