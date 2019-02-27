@@ -52,8 +52,9 @@ module TempestTime
     end
 
     desc 'report', 'Generate a user or team report.'
-    option :week, aliases: '-w', type: :numeric
     option :team, aliases: '-t', type: :string
+    option :start, aliases: '-s', type: :string
+    option :end, aliases: '-e', type: :string
     def report(*users)
       require_relative 'commands/report'
       TempestTime::Commands::Report.new(users, options).execute

@@ -13,6 +13,8 @@ module TempestTime
       def initialize(users, options)
         @users = users || []
         @team = options[:team]
+        @start_date = options['start'] ? Date.parse(options['start']) : nil
+        @end_date = options['end'] ? Date.parse(options['end']) : nil
         @teams = TempestTime::Settings::Teams.new
       end
 
@@ -24,7 +26,11 @@ module TempestTime
         @users.push(@teams.members(@team)) if @team
         abort('No users specified.') unless @users.any?
 
-        @week = week_prompt('Please select the week to report.')
+        if @start_date.nil? || @end_date.nil?
+          @week = week_prompt('Please select the week to report.')
+        else
+          validate_date_input
+        end
 
         with_spinner('Generating report...') do |spinner|
           table = render_table
@@ -70,6 +76,10 @@ module TempestTime
 
       def end_date
         @end_date ||= week_dates(@week).last
+      end
+
+      def validate_date_input
+        abort('Start date must come before end date.') unless start_date < end_date
       end
 
       def required_seconds
