@@ -18,6 +18,7 @@ module TempestTime
 
       def execute!
         dates
+
         unless options[:autoconfirm]
           confirm_prompt
         end
@@ -31,13 +32,13 @@ module TempestTime
       private
 
       def track_time(time, options)
-        message = "Tracking #{formatted_time(time)} to #{options['issue']}..."
+        message = "Tracking #{formatted_time(time)} to #{options[:issue]}..."
         with_success_fail_spinner(message) do
-          options['remaining'] = if options['remaining'].nil?
-                                   remaining_estimate(options['issue'], time)
-                                 else
-                                   parsed_time(options['remaining'])
-                                 end
+          options[:remaining] = if options[:remaining].nil?
+                                  remaining_estimate(options[:issue], time)
+                                else
+                                  parsed_time(options[:remaining])
+                                end
           TempoAPI::Requests::CreateWorklog.new(time, options).send_request
         end
       end
@@ -71,7 +72,7 @@ module TempestTime
       end
 
       def billability(options)
-        options['billable'] ? 'billed' : 'non-billed'
+        options[:billable] ? 'billed' : 'non-billed'
       end
     end
   end

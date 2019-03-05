@@ -7,11 +7,11 @@ module TempoAPI
       def initialize(seconds, options)
         super
         @seconds = seconds
-        @remaining = options['remaining']
-        @issue = options['issue']
-        @message = options['message']
-        @date = options['date'] ? options['date'] : Date.today
-        @billable = options['billable']
+        @remaining = options[:remaining]
+        @issue = options[:issue]
+        @message = options[:message]
+        @date = options[:date] ? options[:date] : Date.today
+        @billable = options[:billable]
       end
 
       private

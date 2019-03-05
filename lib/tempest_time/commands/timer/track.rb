@@ -38,8 +38,8 @@ module TempestTime
           Commands::Track.new(
             parsed_time(time),
             [issue],
-            'message' => message,
-            'billable' => billable
+            message: message,
+            billable: billable
           ).execute
         end
       end

@@ -13,8 +13,8 @@ module TempestTime
       def initialize(users, options)
         @users = users || []
         @team = options[:team]
-        @start_date = options['start'] ? Date.parse(options['start']) : nil
-        @end_date = options['end'] ? Date.parse(options['end']) : nil
+        @start_date = options[:start] ? Date.parse(options[:start]) : nil
+        @end_date = options[:end] ? Date.parse(options[:end]) : nil
         @teams = TempestTime::Settings::Teams.new
       end
 
