@@ -21,7 +21,7 @@ module TempestTime
       end
 
       def compliance_percentage(time)
-        (time.to_f / (required_seconds * number_of_users))
+        time.to_f / required_seconds
       end
 
       def project_compliance_percentages
