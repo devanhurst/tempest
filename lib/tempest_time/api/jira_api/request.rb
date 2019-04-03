@@ -31,7 +31,7 @@ module JiraAPI
       Response
     end
 
-    def user
+    def auth_user
       credentials.fetch(:email, nil)
     end
 

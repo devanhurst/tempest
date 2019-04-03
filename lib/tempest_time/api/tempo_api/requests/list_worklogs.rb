@@ -8,16 +8,16 @@ module TempoAPI
     class ListWorklogs < TempoAPI::Request
       attr_reader :start_date, :end_date
 
-      def initialize(start_date, end_date: nil, requested_user: nil)
+      def initialize(start_date, end_date: nil, user: nil)
         super
         @start_date = start_date
         @end_date = end_date || start_date
-        @requested_user = requested_user || user
+        @user = user
       end
 
       private
 
-      attr_reader :requested_user
+      attr_reader :user
 
       def response_klass
         TempoAPI::Responses::ListWorklogs
@@ -28,7 +28,7 @@ module TempoAPI
       end
 
       def request_path
-        "/worklogs/user/#{requested_user}"
+        "/worklogs/user/#{user.account_id}"
       end
 
       def query_params

@@ -20,7 +20,7 @@ module TempestTime
 
       def execute!
         if @users.empty? && @team.nil?
-          @users = user_prompt
+          @users = user_prompt.map { |user| find_user(user) }
         end
 
         @users.push(@teams.members(@team)) if @team
@@ -86,7 +86,7 @@ module TempestTime
         @required_seconds ||= TempoAPI::Requests::GetUserSchedule.new(
           start_date: start_date,
           end_date: end_date,
-          requested_user: @users.first
+          user: @users.first
         ).send_request.required_seconds
       end
 
@@ -95,7 +95,7 @@ module TempestTime
           worklogs = TempoAPI::Requests::ListWorklogs.new(
             start_date,
             end_date: end_date,
-            requested_user: user
+            user: user
           ).send_request.worklogs
 
           TempestTime::Models::Report.new(
@@ -143,7 +143,7 @@ module TempestTime
 
       def row(data)
         row = [
-          data.user,
+          (data.user.is_a?(String) ? data.user : data.user.name),
           right_align(percentage(data.total_compliance_percentage)),
           right_align(percentage(data.utilization_percentage)),
         ]

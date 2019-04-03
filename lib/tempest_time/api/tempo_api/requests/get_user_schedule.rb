@@ -6,23 +6,23 @@ module TempoAPI
     class GetUserSchedule < TempoAPI::Request
       attr_reader :start_date, :end_date
 
-      def initialize(start_date:, end_date:, requested_user:)
+      def initialize(start_date:, end_date:, user:)
         super
         @start_date = start_date
         @end_date = end_date || start_date
-        @requested_user = requested_user || user
+        @user = user
       end
 
       private
 
-      attr_reader :requested_user
+      attr_reader :user
 
       def request_method
         'get'
       end
 
       def request_path
-        "/user-schedule/#{requested_user}"
+        "/user-schedule/#{user.account_id}"
       end
 
       def query_params

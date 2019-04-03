@@ -7,7 +7,7 @@ module TempestTime
   module Commands
     class List < TempestTime::Command
       def initialize(options)
-        @user = options[:user]
+        @user = find_user(options[:user])
         @dates = options[:date] ? [Date.parse(options[:date])] : nil
       end
 
@@ -18,11 +18,14 @@ module TempestTime
           days_after: 13
         ).sort
         @dates.each do |date|
-          with_spinner("Retrieving logs for #{pastel.yellow(formatted_date(date))}...") do |spin|
+          with_spinner(
+            "Retrieving logs for #{pastel.yellow(@user.name)} "\
+            "on #{pastel.yellow(formatted_date(date))}..."
+          ) do |spin|
             @response = TempoAPI::Requests::ListWorklogs.new(
               date,
               end_date: nil,
-              requested_user: @user
+              user: @user
             ).send_request
             spin.stop(pastel.green('Done!'))
             prompt.say(render_table)
@@ -45,7 +48,7 @@ module TempestTime
         t.render(
           :ascii,
           padding: [0, 1],
-          column_widths: [7, 10, 15, 30],
+          column_widths: [7, 15, 15, 30],
           multiline: true
         )
       end

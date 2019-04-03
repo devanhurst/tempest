@@ -7,13 +7,14 @@ require_relative '../api/tempo_api/requests/create_worklog'
 module TempestTime
   module Commands
     class Track < TempestTime::Command
-      attr_reader :time, :issues, :options
+      attr_reader :time, :issues, :options, :user
 
       def initialize(time, issues, options)
         @options = options
         @issues = issues.any? ? issues.map(&:upcase) : [automatic_issue]
         @time = parsed_time(time) / @issues.count
         @dates = options[:date] ? [Date.parse(options[:date])] : nil
+        @user = current_user
       end
 
       def execute!
@@ -24,7 +25,7 @@ module TempestTime
         end
         dates.each do |date|
           issues.each do |issue|
-            track_time(time, options.merge({ issue: issue, date: date }))
+            track_time(time, options.merge({ issue: issue, date: date, user: user }))
           end
         end
       end
@@ -61,13 +62,12 @@ module TempestTime
       end
 
       def remaining_estimate(issue, time)
-        request = JiraAPI::Requests::GetIssue.new(issue)
-        request.send_request
-        if request.response.failure?
-          abort("There was an issue getting this Jira issue.\n"\
+        response = JiraAPI::Requests::GetIssue.new(issue).send_request
+        if response.failure?
+          abort("There was a problem getting this Jira issue.\n"\
                 'Please check the issue number and your credentials.')
         end
-        remaining = request.response.issue.remaining_estimate || 0
+        remaining = response.issue.remaining_estimate || 0
         remaining > time ? remaining - time : 0
       end
 

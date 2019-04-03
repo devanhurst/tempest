@@ -8,10 +8,10 @@ module TempestTime
       namespace :issue
 
       desc 'list', 'List unresolved issues.'
-      option :date, type: :string
-      def list(user = nil)
+      option :user, aliases: '-u', type: :string
+      def list
         require_relative 'issue/list'
-        TempestTime::Commands::Issue::List.new(user).execute
+        TempestTime::Commands::Issue::List.new(options).execute
       end
 
       desc 'open', 'Open an issue in your browser. (Default: current branch)'

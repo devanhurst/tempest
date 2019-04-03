@@ -11,15 +11,19 @@ module TempestTime
       end
 
       def execute!
-        reviewer = prompt.ask('Who should review this timesheet? (username)')
+        reviewer = find_user(prompt.ask('Who should review this timesheet?'))
         dates = week_dates(week_prompt('Select a week to submit.'))
 
-        message = 'Submit the selected timesheet to ' + pastel.green(reviewer) + '?'
+        message = 'Submit the selected timesheet to ' + pastel.green(reviewer.name) + '?'
         abort unless prompt.yes?(message)
         abort unless prompt.yes?('Are you sure? No edits can be made once submitted!')
 
         with_success_fail_spinner('Submitting your timesheet...') do
-          TempoAPI::Requests::SubmitTimesheet.new(reviewer, dates).send_request
+          TempoAPI::Requests::SubmitTimesheet.new(
+            submitter: current_user,
+            reviewer: reviewer,
+            dates: dates
+          ).send_request
         end
       end
     end

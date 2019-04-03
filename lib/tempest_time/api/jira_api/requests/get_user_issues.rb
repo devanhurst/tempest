@@ -4,11 +4,11 @@ require_relative '../responses/get_user_issues'
 module JiraAPI
   module Requests
     class GetUserIssues < JiraAPI::Request
-      attr_reader :requested_user
+      attr_reader :user
 
-      def initialize(requested_user: nil)
+      def initialize(user:)
         super
-        @requested_user = requested_user || username
+        @user = user
       end
 
       private
@@ -23,7 +23,7 @@ module JiraAPI
 
       def query_params
         {
-          'jql' => "assignee=#{requested_user} AND resolution is EMPTY",
+          'jql' => "assignee=#{user.username} AND resolution is EMPTY",
           'maxResults' => 100,
         }
       end

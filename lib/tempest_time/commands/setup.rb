@@ -72,10 +72,12 @@ module TempestTime
       end
 
       def check_for_validity
-        jira = JiraAPI::Requests::GetCurrentUser.new
-        tempo = TempoAPI::Requests::ListWorklogs.new(Date.today)
-        raise StandardError unless jira.send_request.success?
-        raise StandardError unless tempo.send_request.success?
+        raise StandardError unless JiraAPI::Requests::GetCurrentUser.new.send_request.user
+        raise StandardError unless tempo_token_is_valid?
+      end
+
+      def tempo_token_is_valid?
+        TempoAPI::Requests::ListWorklogs.new(Date.today).send_request.success?
       end
 
       def email

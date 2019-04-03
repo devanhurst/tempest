@@ -5,7 +5,7 @@ module TempoAPI
     private
 
     def url
-      'https://api.tempo.io/2'
+      'https://api.tempo.io/core/3'
     end
 
     def user

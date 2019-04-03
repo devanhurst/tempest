@@ -12,11 +12,12 @@ module TempoAPI
         @message = options[:message]
         @date = options[:date] ? options[:date] : Date.today
         @billable = options[:billable]
+        @user = options[:user]
       end
 
       private
 
-      attr_reader :issue, :remaining, :seconds, :message, :date, :billable
+      attr_reader :issue, :remaining, :seconds, :message, :date, :billable, :user
 
       def request_method
         'post'
@@ -38,7 +39,7 @@ module TempoAPI
           "remainingEstimateSeconds": remaining,
           "startDate": date.strftime('%Y-%m-%d'),
           "startTime": '12:00:00',
-          "authorUsername": user,
+          "authorAccountId": user.account_id,
           "description": message,
         }
       end

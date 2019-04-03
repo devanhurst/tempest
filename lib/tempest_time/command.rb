@@ -5,6 +5,8 @@ require 'forwardable'
 require_relative 'helpers/time_helper'
 require_relative 'helpers/formatting_helper'
 require_relative 'helpers/git_helper'
+require_relative 'api/jira_api/requests/get_current_user'
+require_relative 'api/jira_api/requests/search_users'
 
 module TempestTime
   class Command
@@ -89,6 +91,32 @@ module TempestTime
       else
         s.error(pastel.red(response.message))
       end
+    end
+
+    def find_user(query)
+      return current_user unless query
+
+      users = JiraAPI::Requests::SearchUsers.new(query: query).send_request.users
+      case users.count
+      when 0
+        abort(
+          pastel.red('User not found!') + ' ' \
+          'Please check your query and try again.'
+        )
+      when 1
+        return users.first
+      else
+        require 'tty-prompt'
+        TTY::Prompt.new.select(
+          pastel.yellow('Multiple users match your query. Please select a user.'),
+          users.map { |user| { "#{user.name}: #{user.email}" => user } },
+          per_page: 10
+        )
+      end
+    end
+
+    def current_user
+      @current_user ||= JiraAPI::Requests::GetCurrentUser.new.send_request.user
     end
   end
 end

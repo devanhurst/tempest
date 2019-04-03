@@ -61,7 +61,7 @@ module TempestTime
         authorization_klass.new.credentials
       end
 
-      def user
+      def auth_user
         credentials.fetch(:user, nil)
       end
 
@@ -82,7 +82,7 @@ module TempestTime
       end
 
       def basic_auth
-        { username: user, password: token }
+        { username: auth_user, password: token }
       end
     end
   end

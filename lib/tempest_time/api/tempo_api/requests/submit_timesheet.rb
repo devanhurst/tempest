@@ -7,10 +7,11 @@ module TempoAPI
     class SubmitTimesheet < TempoAPI::Request
       include TempestTime::Helpers::TimeHelper
 
-      attr_reader :reviewer, :dates
+      attr_reader :submitter, :reviewer, :dates
 
-      def initialize(reviewer, dates)
+      def initialize(submitter:, reviewer:, dates:)
         super
+        @submitter = submitter
         @reviewer = reviewer
         @dates = dates
       end
@@ -22,7 +23,7 @@ module TempoAPI
       end
 
       def request_path
-        "/timesheet-approvals/user/#{user}/submit"
+        "/timesheet-approvals/user/#{submitter.account_id}/submit"
       end
 
       def response_klass
@@ -38,7 +39,7 @@ module TempoAPI
 
       def request_body
         {
-          reviewerUsername: reviewer,
+          reviewerAccountId: reviewer.account_id,
         }
       end
     end

@@ -7,13 +7,13 @@ module TempestTime
   module Commands
     class Issue
       class List < TempestTime::Command
-        def initialize(user)
-          @user = user || current_user
+        def initialize(options)
+          @user = find_user(options[:user])
         end
 
         def execute!
-          request = JiraAPI::Requests::GetUserIssues.new(requested_user: @user)
-          message = "Getting issues for #{request.requested_user}"
+          request = JiraAPI::Requests::GetUserIssues.new(user: @user)
+          message = "Getting issues for #{pastel.yellow(@user.name)}"
           response = with_spinner(message) do |spinner|
             request.send_request.tap { spinner.stop }
           end
@@ -38,16 +38,11 @@ module TempestTime
           table.new(
             %w(Status Issue Summary),
             issues.map { |issue| row(issue) }
-          ).render(:ascii, padding: [0, 1], column_widths: [15, 10, 30])
+          ).render(:ascii, padding: [0, 1], column_widths: [15, 15, 45])
         end
 
         def row(issue)
           [issue.status, issue.key, issue.summary]
-        end
-
-        def current_user
-          require_relative '../../settings/authorization'
-          TempestTime::Settings::Authorization.new.fetch('username')
         end
       end
     end

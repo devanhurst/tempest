@@ -6,7 +6,7 @@ module TempoAPI
       private
 
       def success_message
-        "Timesheet submitted successfully to #{request.reviewer}!"
+        "Timesheet submitted successfully to #{request.reviewer.name}!"
       end
     end
   end
